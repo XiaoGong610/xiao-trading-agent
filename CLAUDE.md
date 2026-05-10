@@ -23,15 +23,15 @@ Act as a top-tier equity research analyst. Be brief and to the point — lead wi
 Research establishes conviction first, then recommends a strategy. The research funnel goes top-down:
 
 ```
-/research-scan-market    →  Where is money flowing? Which sectors/themes are hot?
+/research-scan-market       →  Where is money flowing? Which sectors/themes are hot?
     ↓
-/research-scan-sector    →  Deep-dive a sector or theme, rank 5-10 candidates
+/research-scan-sector      →  Deep-dive a sector or theme, rank 5-10 candidates
     ↓
-/research-scan-stocks    →  Compare a shortlist of tickers, rank by opportunity
+/research-stock            →  Full deep-dive: fundamentals, earnings, sentiment, strategy fit
     ↓
-/research-stock          →  Full deep-dive: fundamentals, earnings, sentiment, strategy fit
+/research-compare-stocks   →  Compare researched stocks head-to-head, pick the best
     ↓
-/plan-stock              →  Orchestrator: context → research → strategy → trade setup
+/plan-stock                →  Orchestrator: context → research → strategy → trade setup
 ```
 
 Each level narrows the focus. Jump in at any level — if you already know the stock, go straight to `/research-stock` or `/plan-stock`.
@@ -65,8 +65,8 @@ Research → Strategy → Trade → Manage → Exit
 |----------|-------|---------|
 | **research** | `/research-scan-market` | Broad market overview, sector rotation |
 | | `/research-scan-sector` | Deep-dive a sector or theme, rank candidates |
-| | `/research-scan-stocks` | Compare a shortlist of tickers |
 | | `/research-stock` | Full stock deep-dive: fundamentals, earnings, strategy fit |
+| | `/research-compare-stocks` | Compare researched stocks head-to-head, pick the best |
 | **plan** | `/plan-stock` | Orchestrator: context → research → strategy → trade setup |
 | **strategy** | `/strategy-buy-and-hold` | Buy & Hold execution planning |
 | | `/strategy-dca` | DCA schedule and sizing |
@@ -178,7 +178,7 @@ A virtual environment at `.venv/` (Python 3.12) with:
 - `matplotlib` — static charts
 - `pandas` — data analysis
 
-Activate before running scripts: `source .venv/bin/activate`
+Run scripts using `.venv/bin/python3` directly (do NOT use `source .venv/bin/activate` — it doesn't work reliably in all shell contexts).
 
 ## Scripts
 

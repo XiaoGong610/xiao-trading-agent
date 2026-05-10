@@ -10,7 +10,7 @@ This is a lightweight skill to quickly add a stock to the watchlist for monitori
 
 **Step 1:** Run the data script for quick price, support, and 52-week data:
 ```bash
-source .venv/bin/activate && python3 scripts/technicals.py $ARGUMENTS
+.venv/bin/python3 scripts/technicals.py $ARGUMENTS
 ```
 
 Use the script's output for price, support levels, and technicals. Supplement with web search for earnings dates, news, and IV context.

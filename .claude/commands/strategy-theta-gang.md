@@ -21,7 +21,7 @@ This is a pure options mechanics analysis. Do NOT cover company fundamentals, gr
 
 **Step 1:** Run the data script:
 ```bash
-source .venv/bin/activate && python3 scripts/technicals.py TICKER --options
+.venv/bin/python3 scripts/technicals.py TICKER --options
 ```
 
 Use the script's output for IV, price, support/resistance levels, and expiry data. Supplement with web search only for qualitative info the script can't provide.
@@ -87,7 +87,7 @@ Compare strike and expiry options for the given ticker and strategy. Arguments a
 
 **Step 1:** Run the data script:
 ```bash
-source .venv/bin/activate && python3 scripts/technicals.py TICKER --options
+.venv/bin/python3 scripts/technicals.py TICKER --options
 ```
 
 Use the script's output for price, support/resistance, IV, and options chain data. Supplement with web search only if needed.
@@ -127,7 +127,7 @@ Analyze rolling options for the given position. Arguments after `roll`: TICKER C
 
 **Step 1:** Run the data script:
 ```bash
-source .venv/bin/activate && python3 scripts/technicals.py TICKER --options
+.venv/bin/python3 scripts/technicals.py TICKER --options
 ```
 
 Use the script's output for current price, support/resistance, and options chain data. Supplement with web search for any additional context needed.

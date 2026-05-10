@@ -10,7 +10,7 @@ Read the portfolio file at `portfolio/$TICKER.md` to understand the current posi
 
 **Step 1:** Run the data script to get current price and technicals:
 ```bash
-source .venv/bin/activate && python3 scripts/technicals.py $ARGUMENTS
+.venv/bin/python3 scripts/technicals.py $ARGUMENTS
 ```
 
 Use the script's output for current price, technicals, and support/resistance vs. entry data. Supplement with web search for news and qualitative updates.

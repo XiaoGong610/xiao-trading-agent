@@ -10,7 +10,7 @@ Assume the user already has conviction from `/research-stock` or `/plan-stock`. 
 
 **Step 1:** Run the data script:
 ```bash
-source .venv/bin/activate && python3 scripts/technicals.py $ARGUMENTS
+.venv/bin/python3 scripts/technicals.py $ARGUMENTS
 ```
 
 Use the script's output for price, technicals, and support/resistance. Supplement with web search for recent news or valuation context.

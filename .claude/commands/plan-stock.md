@@ -6,33 +6,32 @@ Run a complete pre-trade analysis for: $ARGUMENTS
 
 The argument is just a ticker (e.g., "AAPL", "TSLA").
 
-This chains together research → strategy selection → trade setup in one shot. Work through each phase sequentially.
+This is the **orchestrator** — it chains together the research funnel, strategy selection, and trade setup in one shot. It pulls from existing research when available and fills gaps.
 
-**Step 1:** Run the data script upfront to get price, technicals, fundamentals, and options data:
+---
+
+## Phase 1: Gather Context
+
+**Check for existing research first:**
+- Read `research/stocks/$TICKER.md` — if a recent `/research-stock` entry exists, summarize key findings. Don't redo work.
+- Read `research/sectors/` — check if the stock's sector has been scanned recently for broader context.
+- Read `research/sectors/market-overview.md` — pull current market pulse (sentiment, VIX, macro).
+
+**If no existing research:** Run the research inline:
 ```bash
-source .venv/bin/activate && python3 scripts/technicals.py $ARGUMENTS --options
+.venv/bin/python3 scripts/technicals.py $ARGUMENTS --options
 ```
+Then use web search for qualitative info. Cover: business model, growth, earnings, sentiment (same as `/research-stock`).
 
-Use this data throughout all phases below. Supplement with web search for qualitative info (news, analyst opinions, earnings details) that the script can't provide.
+**If existing research is stale (>7 days old):** Re-run the data script for fresh technicals, but reuse the qualitative research.
 
----
-
-## Phase 1: Conviction Check
-
-Use the fundamentals from the script output + web search to assess:
-- What the company does, market cap, sector
-- Revenue/earnings growth trend (accelerating, stable, declining?)
-- Balance sheet: healthy or overleveraged?
-- Recent news: anything alarming?
-- Analyst consensus: broadly bullish, neutral, or bearish?
-
-**Verdict:** Pass / Fail — do you have conviction in this company?
-
-If Fail → stop here.
+Summarize the conviction check:
+- **Verdict:** Pass / Fail — do you have conviction?
+- If Fail → stop here.
 
 ---
 
-## Phase 2: Market Context
+## Phase 2: Market Context & Timing
 
 Use the script's `price`, `technicals`, `support`, `resistance`, and `options` data:
 - Current stock price, 5-day and 1-month trend
@@ -40,6 +39,7 @@ Use the script's `price`, `technicals`, `support`, `resistance`, and `options` d
 - Where is price relative to 52-week range?
 - IV rank and IV percentile — is premium rich or cheap?
 - Upcoming events: earnings date, ex-dividend date, binary catalysts
+- Is now a good entry point, or should you wait?
 
 ---
 
@@ -47,50 +47,47 @@ Use the script's `price`, `technicals`, `support`, `resistance`, and `options` d
 
 Based on conviction, market context, and the stock's profile, recommend the best strategy:
 
-| Strategy | Best When |
-|----------|-----------|
-| **Buy & Hold** | High-conviction compounder, long time horizon, want full upside |
-| **DCA** | Conviction is there but timing is uncertain, want to average in |
-| **LEAP Calls** | Bullish with leverage, defined risk, stock has clear catalysts ahead |
-| **Theta Gang (CSP)** | Bullish, want to enter at a discount, IV is elevated, stock at support |
-| **Theta Gang (CC)** | Own shares, want income, stock near resistance or range-bound |
-| **Theta Gang (PMCC)** | Bullish long-term, low IV, want leverage + income, less capital than CC |
-| **Theta Gang (Iron Condor)** | Neutral/range-bound, want to collect premium from both sides |
+| Strategy | Best When | Skill |
+|----------|-----------|-------|
+| **Buy & Hold** | High-conviction compounder, long time horizon, want full upside | `/strategy-buy-and-hold` |
+| **DCA** | Conviction but timing uncertain, want to average in | `/strategy-dca` |
+| **LEAP Calls** | Bullish with leverage, defined risk, clear catalysts, IV is low | `/strategy-leaps` |
+| **Theta Gang** | Elevated IV, range-bound or at support, happy to own shares | `/strategy-theta-gang analyze` |
 
-Pick the best fit (or a combination) and explain why. Consider:
+Consider:
+- Are US-listed options available? If not, only stock-based strategies apply (Buy & Hold, DCA).
 - Does the stock's volatility suit options selling or buying?
 - Is IV rich enough for theta gang, or too low (favoring LEAPs/buy & hold)?
 - Is the growth profile better suited for long-term holding or income extraction?
 - Does the user already own shares? (If unknown, analyze both paths)
 
+Pick the best fit (or a combination) and explain why.
+
 ---
 
 ## Phase 4: Trade Setup
 
-Based on the chosen strategy, provide specific execution details:
+Based on the chosen strategy, provide specific execution details by running the relevant strategy skill inline:
 
-**If Buy & Hold:**
+**If Buy & Hold:** Follow `/strategy-buy-and-hold` framework:
 - Entry price / target buy zone (support levels)
-- Position sizing suggestion
-- What would change the thesis (stop-loss level or thesis-break triggers)
+- Position sizing (% of portfolio, scaling plan)
+- Thesis-break triggers and exit rules
 
-**If DCA:**
-- Suggested schedule (weekly, biweekly, monthly)
-- Per-period amount or share count
-- How long to DCA (until position is full-sized)
-- Price level where you'd accelerate or pause
+**If DCA:** Follow `/strategy-dca` framework:
+- Schedule (weekly, biweekly, monthly) and amount per period
+- Total budget and duration
+- Acceleration/pause rules
 
-**If LEAP Calls:**
-- Strike: ATM for balanced, deep ITM (delta 0.70-0.80) for stock replacement
-- Expiry: 9-12+ months out
-- Premium cost and max risk
-- Breakeven at expiry
-- Delta, theta decay rate
-- Exit plan: target profit %, stop-loss level
+**If LEAP Calls:** Follow `/strategy-leaps` framework:
+- Strike selection (deep ITM / ATM / OTM with rationale)
+- Expiry (9-12+ months), premium, breakeven, delta
+- Position sizing, stop loss, rolling plan
 
-**If Theta Gang:**
-- Refer user to `/theta-gang analyze $TICKER` for detailed options setup
-- Quick summary: suggested strategy (CSP/CC/PMCC/IC), approximate strike zone, target DTE
+**If Theta Gang:** Follow `/strategy-theta-gang analyze` framework:
+- Strategy (CSP/CC/PMCC/IC), strike, expiry, premium, Greeks
+- Probability of profit, max profit/loss, annualized return
+- Roll rules and management plan
 
 ---
 
@@ -103,7 +100,9 @@ Based on the chosen strategy, provide specific execution details:
 - [ ] Specific trade setup defined with entry, exit, and risk? (Phase 4)
 - [ ] Position sizing appropriate for portfolio?
 
-**Final Verdict:** Go / No-Go with a one-line summary and the recommended strategy.
+**Final Verdict:** Go / No-Go / Wait — with a one-line summary, recommended strategy, and next action.
+
+If "Wait": specify what trigger or date to revisit (e.g., "Wait for post-earnings May 11, then re-run `/plan-stock`").
 
 ---
 

@@ -10,7 +10,7 @@ Assume the user already has conviction from `/research-stock` or `/plan-stock`. 
 
 **Step 1:** Run the data script with options data:
 ```bash
-source .venv/bin/activate && python3 scripts/technicals.py $ARGUMENTS --options
+.venv/bin/python3 scripts/technicals.py $ARGUMENTS --options
 ```
 
 Use the script's output for price, support/resistance, IV, and options chain. Supplement with web search for catalysts and timeline.

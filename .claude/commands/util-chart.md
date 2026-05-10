@@ -69,5 +69,5 @@ Write and run a Python script that:
    - Save as `charts/TICKER_YYYY-MM-DD.html`
    - Open in browser automatically via `open` command (macOS)
 
-Make sure to activate the venv before running: `source .venv/bin/activate`
+Use `.venv/bin/python3` to run the script (do NOT use `source .venv/bin/activate`).
 Create the `charts/` directory if it doesn't exist.

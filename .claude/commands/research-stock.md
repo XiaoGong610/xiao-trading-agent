@@ -8,7 +8,7 @@ This is a strategy-agnostic fundamentals and sentiment analysis. Focus on whethe
 
 **Step 1:** Run the data script to get current price, technicals, and fundamentals:
 ```bash
-source .venv/bin/activate && python3 scripts/technicals.py $ARGUMENTS
+.venv/bin/python3 scripts/technicals.py $ARGUMENTS
 ```
 
 **Step 2:** Use web search to gather qualitative information (news, earnings, analyst opinions).
