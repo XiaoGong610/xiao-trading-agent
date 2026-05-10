@@ -34,6 +34,6 @@ Use web search to find earnings call details, transcripts, and analyst coverage.
 - What changed about the thesis (if anything)?
 - Bullish or bearish signal overall?
 
-Save the output to `research/$ARGUMENTS.md` (use uppercase ticker as filename).
+Save the output to `research/stocks/$ARGUMENTS.md` (use uppercase ticker as filename).
 Start the entry with a date separator: `---` followed by `# TICKER — Earnings Call | YYYY-MM-DD`.
 If the file already exists, prepend the new analysis above all previous entries (after the file title). Never remove historical entries.

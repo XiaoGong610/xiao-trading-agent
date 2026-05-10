@@ -6,7 +6,13 @@ Scan and rank these stocks for theta gang opportunities: $ARGUMENTS
 
 The argument is a comma-separated list of tickers (e.g., "AAPL, TSLA, NVDA, AMZN, MSFT")
 
-Use web search to gather current data for each stock.
+**Step 1:** Run the data script for each ticker to get structured market data:
+```bash
+source .venv/bin/activate && for ticker in TICKER1 TICKER2 ...; do echo "=== $ticker ===" && python3 scripts/technicals.py $ticker --options; done
+```
+(Replace the ticker list with the actual tickers from the arguments.)
+
+Use the script's output for programmatic comparison across all tickers. Supplement with web search for earnings dates and qualitative context the script can't provide.
 
 ## Screening Criteria
 

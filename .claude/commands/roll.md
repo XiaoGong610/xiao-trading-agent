@@ -7,7 +7,13 @@ Analyze rolling options for: $ARGUMENTS
 The argument format is: TICKER CURRENT_STRIKE CURRENT_EXPIRY STRATEGY
 (e.g., "AAPL 170P 2026-05-16 CSP" or "TSLA 280C 2026-05-09 CC")
 
-Use web search to get current stock price and options chain data.
+**Step 1:** Run the data script to get current price and options chain context:
+```bash
+source .venv/bin/activate && python3 scripts/technicals.py $TICKER --options
+```
+(Extract the ticker from the arguments.)
+
+Use the script's output for current price, support/resistance, and options chain data. Supplement with web search for any additional context needed.
 
 ## Current Position Status
 - Current stock price vs. your strike
@@ -41,4 +47,8 @@ Rolling types to consider:
 - Clear roll / don't roll decision with reasoning
 - If roll: specify exact new strike, expiry, and expected net credit
 
-Do NOT save output to a file — this is a live analysis tool for decision-making.
+Save the output by appending to `portfolio/$TICKER.md` (extract the ticker from the arguments).
+Start the entry with a date separator: `---` followed by `# TICKER — Roll Analysis | YYYY-MM-DD`.
+Prepend above any previous analysis entries (after the YAML frontmatter block). Never remove historical entries.
+
+If the portfolio file's frontmatter has a `strike` or `expiry` field and you recommend a roll, note that the user should update the frontmatter after executing the roll.

@@ -4,7 +4,7 @@ description: Check what top ThetaGang.com traders are doing on a specific ticker
 
 Check what the top theta gang traders are doing on: $ARGUMENTS
 
-Reference the leader list at `theta-gang/leaders.md` for the top 10 traders.
+Reference the leader list at `leaders.md` (in the project root) for the top 10 traders.
 
 For the given ticker, check the following profiles and summarize any recent trades:
 

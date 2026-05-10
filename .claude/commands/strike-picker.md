@@ -6,7 +6,13 @@ Analyze strike and expiry options for: $ARGUMENTS
 
 The argument format is: TICKER STRATEGY (e.g., "AAPL CSP", "TSLA CC", "NVDA PMCC", "AMZN IC")
 
-Use web search to get current stock price, options chain data, and IV information.
+**Step 1:** Run the data script to get real options chain data:
+```bash
+source .venv/bin/activate && python3 scripts/technicals.py $TICKER --options
+```
+(Extract the ticker from the arguments.)
+
+Use the script's output for price, support/resistance, IV, and options chain data. Supplement with web search only if needed.
 
 ## Current Setup
 - Stock price, 52-week range, recent trend

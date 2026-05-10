@@ -6,11 +6,16 @@ Analyze the options setup for theta gang trading: $ARGUMENTS
 
 This is a pure options mechanics analysis. Do NOT cover company fundamentals, growth, or earnings quality — that belongs in `/research`. Assume the user already has conviction on the stock.
 
-Use web search to gather current options chain data, IV data, and key dates.
+**Step 1:** Run the data script to get price, technicals, and options data:
+```bash
+source .venv/bin/activate && python3 scripts/technicals.py $ARGUMENTS --options
+```
+
+Use the script's output for IV, price, support/resistance levels, and expiry data. Supplement with web search only for qualitative info the script can't provide.
 
 ## Options Environment
-- Current stock price and recent trend (5-day, 1-month)
-- IV rank and IV percentile — is premium rich right now?
+- Current stock price and recent trend (from script's `price` and `technicals`)
+- IV rank and IV percentile — is premium rich right now? (from script's `options`)
 - Options liquidity: volume, open interest, bid-ask spreads on near-the-money strikes
 - Theta decay curve: where are we on the 90→0 DTE curve?
 
@@ -42,6 +47,21 @@ Suggest 1-2 setups. For each:
 - If go: best specific trade with reasoning
 - Check what other traders are doing on this ticker at [thetagang.com/symbols/$ARGUMENTS](https://thetagang.com/symbols/$ARGUMENTS) — filter by strategy type, look at winners/losers to validate your setup
 
-Save the output to `theta-gang/$ARGUMENTS.md` (use uppercase ticker as filename).
+Save the output to `watchlist/$ARGUMENTS.md` (use uppercase ticker as filename).
 Start the entry with a date separator: `---` followed by `# TICKER — Theta Gang Analysis | YYYY-MM-DD`.
-If the file already exists, prepend the new analysis above all previous entries (after the file title). Never remove historical entries.
+If the file already exists, prepend the new analysis above all previous entries (after the YAML frontmatter block). Never remove historical entries.
+
+If creating a new file, add YAML frontmatter at the top:
+```yaml
+---
+ticker: TICKER
+status: watching
+added_date: YYYY-MM-DD
+sector: (infer from context)
+thesis: "(one-line summary)"
+entry_target: (recommended strike)
+strategies: [CSP, CC]
+---
+```
+
+If the file already exists and has frontmatter, do not modify the frontmatter — only prepend the new analysis entry below it.

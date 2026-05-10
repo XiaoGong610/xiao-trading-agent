@@ -9,11 +9,18 @@ The argument is just a ticker (e.g., "AAPL", "TSLA").
 This chains together the full workflow in one shot. Work through each phase sequentially.
 Always analyze BOTH the CSP path (don't own shares) and CC path (own shares) so the user can decide based on their current position.
 
+**Step 1:** Run the data script upfront to get price, technicals, fundamentals, and options data:
+```bash
+source .venv/bin/activate && python3 scripts/technicals.py $ARGUMENTS --options
+```
+
+Use this data throughout all 5 phases below. Supplement with web search for qualitative info (news, analyst opinions, earnings details) that the script can't provide.
+
 ---
 
 ## Phase 1: Conviction Check
 
-Use web search to quickly assess:
+Use the fundamentals from the script output + web search to assess:
 - What the company does, market cap, sector
 - Revenue/earnings growth trend (accelerating, stable, declining?)
 - Balance sheet: healthy or overleveraged?
@@ -34,13 +41,13 @@ If Fail on both → stop here.
 
 Is this a good theta gang setup *right now*?
 
-Use web search to gather options data:
+Use the script's `price`, `technicals`, `support`, `resistance`, and `options` data:
 - Current stock price, 5-day and 1-month trend
 - IV rank and IV percentile — is premium rich?
 - Options liquidity: volume, open interest, bid-ask spreads
 - **Earnings date**: if within 30-45 DTE → disqualifier unless intentionally playing IV crush
 - **Ex-dividend date**: if within window, flag the expected price drop
-- Technical levels: key support AND resistance levels
+- Technical levels: key support AND resistance levels from the script
 
 **CSP lens:**
 - Entry timing: is stock pulling back (ideal) or breaking out (sell at breakout level)?
@@ -139,6 +146,21 @@ Before pulling the trigger, check what other traders are doing on this ticker at
 
 ---
 
-Save the output to `theta-gang/$TICKER.md` (use uppercase ticker as filename).
+Save the output to `watchlist/$TICKER.md` (use uppercase ticker as filename).
 Start the entry with a date separator: `---` followed by `# TICKER — Pre-Trade Plan | YYYY-MM-DD`.
-If the file already exists, prepend the new analysis above all previous entries (after the file title). Never remove historical entries.
+If the file already exists, prepend the new analysis above all previous entries (after the YAML frontmatter block). Never remove historical entries.
+
+If creating a new file, add YAML frontmatter at the top:
+```yaml
+---
+ticker: TICKER
+status: watching
+added_date: YYYY-MM-DD
+sector: (infer from research)
+thesis: "(one-line summary of why this stock is interesting)"
+entry_target: (CSP strike recommendation from Phase 4)
+strategies: [CSP, CC]
+---
+```
+
+If the file already exists and has frontmatter, do not modify the frontmatter — only prepend the new analysis entry below it.

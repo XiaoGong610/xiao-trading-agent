@@ -2,16 +2,18 @@
 
 ## Project
 
-**xiao-trading-strategies** — A personal trading research and analysis workspace.
+**xiao-trading-agent** — A personal trading research and analysis workspace.
 
 ## Use Cases
 
 ### 1. Stock Research
-Deep-dive research on individual stocks including:
-- Company fundamentals and growth trajectory
+Act as an equity research analyst. For any company, focus on:
+- **Business model** — how it makes money, what drives revenue and margins
+- **Competitive moat** — what makes it unique vs. competitors
 - Earnings calls analysis (key takeaways, guidance, surprises)
 - Market sentiment (analyst ratings, institutional activity, news flow)
-- Competitive positioning and sector trends
+
+Be brief and to the point. Lead with the business model and differentiation, then layer in sentiment and catalysts.
 
 ### 2. Theta Gang Options Trading
 Expert analysis for selling options (theta decay strategies). Core principle: time is your friend — earn premium by selling extrinsic value (time + IV).
@@ -46,6 +48,16 @@ Expert analysis for selling options (theta decay strategies). Core principle: ti
 - **Sharpe Ratio** — useful for comparison but can be artificially inflated by consistent small premiums hiding large tail risk
 - Track per-stock and portfolio-wide over time
 
+## Research Taxonomy
+
+Research is organized using a hybrid approach: **traditional sectors** for rotation analysis + **cross-cutting themes** for narrative-driven opportunities.
+
+**Sectors** are the standard GICS sectors (Technology, Healthcare, Financials, Energy, Industrials, etc.). They're stable and useful for tracking where money is flowing in/out.
+
+**Themes** are cross-sector investment narratives that cut across traditional sector boundaries (e.g., "AI Infrastructure" spans semis, power, construction, and cloud). Themes emerge organically from `/market-scan` results — don't pre-define them. Add new themes as narratives form, let them fade when they play out.
+
+Both sectors and themes are valid arguments for `/sector-scan`. Scan files go in `research/sectors/` using lowercase names (e.g., `healthcare.md`, `ai-infrastructure.md`, `defense.md`).
+
 ## How to Work
 
 - When researching a stock, present findings in a structured format with clear sections
@@ -54,23 +66,108 @@ Expert analysis for selling options (theta decay strategies). Core principle: ti
 - Flag risks prominently (e.g., upcoming earnings, binary events, low liquidity)
 - Use current market data when available via web search
 
+## Workflow
+
+The trading workflow is a lifecycle:
+
+```
+Sector Scan → Watchlist → Monitor → Entry → Active Management → Exit/Review
+     ↑                                                              |
+     └──────────────────── loop back ───────────────────────────────┘
+```
+
+**Skills mapped to workflow stages:**
+
+| Stage | Skill | Purpose |
+|-------|-------|---------|
+| Scan | `/sector-scan` | Research a sector, rank candidates |
+| Screen | `/scanner` | Rank a list of tickers for theta gang |
+| Research | `/research`, `/earnings` | Deep-dive fundamentals |
+| Watchlist | `/watch` | Add a ticker with entry criteria |
+| Pre-trade | `/plan`, `/theta-gang` | Full analysis before entering |
+| Compare | `/strike-picker` | Compare strike/expiry combos |
+| Validate | `/check-leaders` | Check what top traders are doing |
+| Visualize | `/chart` | Price chart with theta gang overlays |
+| Entry | `/open` | Log a new position to portfolio |
+| Manage | `/review-position`, `/roll` | Review and manage active positions |
+| Dashboard | `/portfolio` | View all positions and stats |
+| Exit | `/close` | Close position, log P&L, run review |
+
 ## Folder Structure
 
 ```
-research/          # Stock research — one file per stock (e.g., AAPL.md)
-theta-gang/        # Theta gang trade analysis — one file per stock (e.g., AAPL.md)
+research/
+  sectors/         # Sector-level scans (e.g., software.md, semis.md)
+  stocks/          # Per-stock deep dives (e.g., AAPL.md)
+watchlist/         # Candidates being monitored with entry criteria
+portfolio/         # Active positions with YAML frontmatter metadata
+trades/            # Closed trade log (moved from portfolio on exit)
+charts/            # Generated interactive HTML charts
+leaders.md         # ThetaGang.com top traders reference
 ```
 
-- Each file is a living document that accumulates historical analysis
+- Each file accumulates historical analysis entries
 - **Ordering rule:** newest analysis on top, oldest at bottom
 - **Section format:** every analysis entry must start with a clear date separator:
   ```
   ---
   # TICKER — Analysis Type | YYYY-MM-DD
   ```
-- When adding new analysis to an existing file, prepend it above all previous entries (after the file title line if one exists)
+- When adding new analysis to an existing file, prepend it above all previous entries (after the YAML frontmatter block)
 - Never overwrite or remove historical entries — they serve as a log of how thinking evolved over time
-- New use cases get their own top-level folder
+
+## Frontmatter
+
+Files in `watchlist/`, `portfolio/`, and `trades/` use YAML frontmatter for structured metadata. This enables the `/portfolio` dashboard to parse and summarize positions.
+
+**watchlist/ files:**
+```yaml
+---
+ticker: AAPL
+status: watching          # watching | in-portfolio | removed
+added_date: 2026-05-07
+sector: Technology
+thesis: "one-line summary"
+entry_target: 185.00
+strategies: [CSP, CC]
+---
+```
+
+**portfolio/ files:**
+```yaml
+---
+ticker: AAPL
+status: active
+strategy: CSP
+entry_date: 2026-05-07
+underlying_price: 195.00
+strike: 185
+expiry: 2026-06-18
+premium: 3.20
+contracts: 1
+cost_basis: 185.00
+---
+```
+
+**trades/ files (named TICKER-YYYYMMDD.md):**
+```yaml
+---
+ticker: AAPL
+status: closed
+strategy: CSP
+entry_date: 2026-05-07
+exit_date: 2026-06-10
+strike: 185
+expiry: 2026-06-18
+premium: 3.20
+contracts: 1
+outcome: expired-worthless
+realized_pnl: 320.00
+annualized_return: 18.5
+---
+```
+
+Multiple positions on the same ticker use a suffix: `AAPL.md`, `AAPL-2.md`.
 
 ## Python Environment
 
@@ -81,6 +178,24 @@ A virtual environment at `.venv/` (Python 3.12) with:
 - `pandas` — data analysis
 
 Activate before running scripts: `source .venv/bin/activate`
+
+## Scripts
+
+### `scripts/technicals.py`
+Fetches structured market data for a ticker. Use this as the data backbone for skills that need current price, technicals, or options info.
+
+```bash
+# Basic: price + technicals + support/resistance + fundamentals
+python3 scripts/technicals.py AAPL
+
+# With options data (IV, put/call ratio, theta gang expiries)
+python3 scripts/technicals.py AAPL --options
+
+# Custom history period
+python3 scripts/technicals.py AAPL --period 1y
+```
+
+Returns JSON with: `price`, `technicals` (RSI, MACD, SMAs, BBands, ATR), `trend`, `support`, `resistance`, `volume_profile_hvn`, `fundamentals`, and optionally `options`.
 
 ## Future Extensions
 

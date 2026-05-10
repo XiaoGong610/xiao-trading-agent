@@ -6,7 +6,14 @@ Research the stock: $ARGUMENTS
 
 This is a strategy-agnostic fundamentals and sentiment analysis. Focus on whether this is a good company to have conviction in — the user may use the research to inform any strategy (DCA, theta gang, buy-and-hold, etc.). Do NOT cover options-specific analysis (IV, Greeks, strikes, premiums).
 
-Use web search to gather current information. Cover the following sections:
+**Step 1:** Run the data script to get current price, technicals, and fundamentals:
+```bash
+source .venv/bin/activate && python3 scripts/technicals.py $ARGUMENTS
+```
+
+**Step 2:** Use web search to gather qualitative information (news, earnings, analyst opinions).
+
+Combine both sources to cover the following sections:
 
 ## Company Overview
 - What the company does, sector, market cap
@@ -35,6 +42,6 @@ Use web search to gather current information. Cover the following sections:
 - Bull case vs. bear case (1-2 sentences each)
 - Overall take: bullish, neutral, or bearish — with reasoning
 
-Save the output to `research/$ARGUMENTS.md` (use uppercase ticker as filename).
+Save the output to `research/stocks/$ARGUMENTS.md` (use uppercase ticker as filename).
 Start the entry with a date separator: `---` followed by `# TICKER — Research | YYYY-MM-DD`.
 If the file already exists, prepend the new analysis above all previous entries (after the file title). Never remove historical entries.
