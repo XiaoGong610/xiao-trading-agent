@@ -50,9 +50,11 @@ Run the applicable strategy skills to get concrete trade setups. Which skills to
 - `/strategy-buy-and-hold $TICKER`
 - `/strategy-dca $TICKER`
 
-**Run if US-listed options are available:**
+**Run if US-listed options are available AND the user is not restricted from trading options on this stock:**
 - `/strategy-theta-gang analyze $TICKER`
 - `/strategy-leaps $TICKER`
+
+**Trading restrictions check:** If the user has restrictions on this stock (check memory — e.g., trading windows, no options), skip restricted strategies and note the constraint.
 
 Each skill will produce its own detailed analysis (entry, sizing, exit rules, risk management). Collect all outputs before proceeding to Phase 4.
 

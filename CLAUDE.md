@@ -99,6 +99,7 @@ research/stocks/ → portfolio/ → trades/
 research/
   sectors/         # Sector-level scans (e.g., software.md, semiconductors.md)
   stocks/          # Per-stock files: research, plans, strategy analysis (one file per stock)
+  comparisons/     # Head-to-head stock comparisons (e.g., semiconductors-2026-05-10.md)
 portfolio/         # Active positions
 trades/            # Closed trade log (moved from portfolio on exit)
 charts/            # Generated interactive HTML charts

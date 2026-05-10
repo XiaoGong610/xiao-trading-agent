@@ -54,4 +54,4 @@ For the stocks being compared, identify:
 - Whether the ETF has liquid options (for theta gang viability)
 - **Verdict:** ETF or individual stocks — and why
 
-Do NOT save output to a file — this is a live analysis tool for decision-making.
+Save the output to `research/comparisons/THEME-YYYY-MM-DD.md` (use lowercase theme name, e.g., `semiconductors-2026-05-10.md`, `software-2026-05-10.md`). For cross-sector comparisons, use a descriptive name (e.g., `best-csp-setups-2026-05-10.md`, `top-picks-overall-2026-05-10.md`).

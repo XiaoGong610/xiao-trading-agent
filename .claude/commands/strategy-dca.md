@@ -10,6 +10,8 @@ The argument format is: TICKER [TOTAL_BUDGET]
 
 Assume the user already has conviction from `/research-stock` or `/plan-stock`. This skill focuses on building a DCA plan: schedule, amounts, and guardrails.
 
+**Important:** If the user has trading restrictions on this stock (e.g., trading windows, no options), adapt the plan accordingly — recommend how much to buy per open window instead of daily, and skip options strategies.
+
 **Step 1:** Run the data script:
 ```bash
 .venv/bin/python3 scripts/technicals.py $ARGUMENTS
