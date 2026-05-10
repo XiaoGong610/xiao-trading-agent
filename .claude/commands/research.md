@@ -42,6 +42,14 @@ Combine both sources to cover the following sections:
 - Bull case vs. bear case (1-2 sentences each)
 - Overall take: bullish, neutral, or bearish — with reasoning
 
+## Strategy Fit
+Based on the stock's volatility, IV environment, growth profile, and price action, recommend which trading strategy fits best:
+- **Buy & Hold** — long-term compounder, just accumulate shares
+- **DCA** — conviction is there but timing is uncertain
+- **LEAP Calls** — bullish with leverage, defined risk
+- **Theta Gang** — rich premiums, range-bound or slight bullish bias
+Pick one (or a combination) and explain why it suits this stock right now.
+
 Save the output to `research/stocks/$ARGUMENTS.md` (use uppercase ticker as filename).
 Start the entry with a date separator: `---` followed by `# TICKER — Research | YYYY-MM-DD`.
 If the file already exists, prepend the new analysis above all previous entries (after the file title). Never remove historical entries.

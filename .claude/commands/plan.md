@@ -1,20 +1,19 @@
 ---
-description: Full pre-trade analysis plan for a theta gang candidate
+description: Full pre-trade analysis plan — research, strategy fit, and trade setup
 ---
 
-Run a complete theta gang pre-trade analysis for: $ARGUMENTS
+Run a complete pre-trade analysis for: $ARGUMENTS
 
 The argument is just a ticker (e.g., "AAPL", "TSLA").
 
-This chains together the full workflow in one shot. Work through each phase sequentially.
-Always analyze BOTH the CSP path (don't own shares) and CC path (own shares) so the user can decide based on their current position.
+This chains together research → strategy selection → trade setup in one shot. Work through each phase sequentially.
 
 **Step 1:** Run the data script upfront to get price, technicals, fundamentals, and options data:
 ```bash
 source .venv/bin/activate && python3 scripts/technicals.py $ARGUMENTS --options
 ```
 
-Use this data throughout all 5 phases below. Supplement with web search for qualitative info (news, analyst opinions, earnings details) that the script can't provide.
+Use this data throughout all phases below. Supplement with web search for qualitative info (news, analyst opinions, earnings details) that the script can't provide.
 
 ---
 
@@ -27,122 +26,84 @@ Use the fundamentals from the script output + web search to assess:
 - Recent news: anything alarming?
 - Analyst consensus: broadly bullish, neutral, or bearish?
 
-**Two-way verdict:**
-- **For CSP:** Would you be comfortable owning 100 shares at a ~10-15% discount?
-- **For CC:** Is this a stock worth continuing to hold? Any reason to exit outright instead?
+**Verdict:** Pass / Fail — do you have conviction in this company?
 
-**Verdict:** Pass / Fail (may pass for one path but not the other)
-
-If Fail on both → stop here.
+If Fail → stop here.
 
 ---
 
-## Phase 2: Options Environment
-
-Is this a good theta gang setup *right now*?
+## Phase 2: Market Context
 
 Use the script's `price`, `technicals`, `support`, `resistance`, and `options` data:
 - Current stock price, 5-day and 1-month trend
-- IV rank and IV percentile — is premium rich?
-- Options liquidity: volume, open interest, bid-ask spreads
-- **Earnings date**: if within 30-45 DTE → disqualifier unless intentionally playing IV crush
-- **Ex-dividend date**: if within window, flag the expected price drop
-- Technical levels: key support AND resistance levels from the script
-
-**CSP lens:**
-- Entry timing: is stock pulling back (ideal) or breaking out (sell at breakout level)?
-- Support levels: where would you want to be assigned?
-
-**CC lens:**
-- Entry timing: is stock rallying into resistance (ideal for CC) or pulling back (less premium)?
-- Resistance levels: where would you be comfortable letting shares get called away?
-
-**Verdict:** Pass / Fail — is the options environment favorable?
-
-If Fail → stop here. Explain why and when to revisit.
+- Technical levels: key support AND resistance
+- Where is price relative to 52-week range?
+- IV rank and IV percentile — is premium rich or cheap?
+- Upcoming events: earnings date, ex-dividend date, binary catalysts
 
 ---
 
-## Phase 3: Strategy Recommendations
+## Phase 3: Strategy Fit
 
-Analyze BOTH paths:
+Based on conviction, market context, and the stock's profile, recommend the best strategy:
 
-### Path A: Don't Own Shares
+| Strategy | Best When |
+|----------|-----------|
+| **Buy & Hold** | High-conviction compounder, long time horizon, want full upside |
+| **DCA** | Conviction is there but timing is uncertain, want to average in |
+| **LEAP Calls** | Bullish with leverage, defined risk, stock has clear catalysts ahead |
+| **Theta Gang (CSP)** | Bullish, want to enter at a discount, IV is elevated, stock at support |
+| **Theta Gang (CC)** | Own shares, want income, stock near resistance or range-bound |
+| **Theta Gang (PMCC)** | Bullish long-term, low IV, want leverage + income, less capital than CC |
+| **Theta Gang (Iron Condor)** | Neutral/range-bound, want to collect premium from both sides |
 
-| Condition | Strategy |
-|-----------|----------|
-| Bullish, want to enter at a discount | CSP |
-| Bullish long-term, low IV, less capital | PMCC |
-| Neutral/range-bound | Iron Condor |
-
-Pick the best fit for this path and explain why.
-
-### Path B: Own 100+ Shares
-
-| Condition | Strategy |
-|-----------|----------|
-| Slightly bullish/neutral, want income | CC |
-| Bullish long-term, want income on both sides | CC + CSP (wheel) |
-| Neutral, want max income | CC with more aggressive (closer to ATM) strike |
-
-Pick the best fit for this path and explain why.
+Pick the best fit (or a combination) and explain why. Consider:
+- Does the stock's volatility suit options selling or buying?
+- Is IV rich enough for theta gang, or too low (favoring LEAPs/buy & hold)?
+- Is the growth profile better suited for long-term holding or income extraction?
+- Does the user already own shares? (If unknown, analyze both paths)
 
 ---
 
-## Phase 4: Strike & Expiry Recommendations
+## Phase 4: Trade Setup
 
-### Path A: CSP Recommendation
+Based on the chosen strategy, provide specific execution details:
 
-- **Strike**: at or below support, delta 0.20-0.30, a price you'd happily own at
-- **Expiration**: specific date, DTE (30-45 sweetspot)
-- **Premium**: estimated credit per share and per contract
-- **Greeks**: delta, theta ($/day), vega, gamma
-- **Probability of profit**
-- **Max profit / Max loss / Breakeven**
-- **Buying power reduction**
-- **Annualized return**: at full profit and at 50% early close
+**If Buy & Hold:**
+- Entry price / target buy zone (support levels)
+- Position sizing suggestion
+- What would change the thesis (stop-loss level or thesis-break triggers)
 
-Plus 1 alternative (different strike or expiry).
+**If DCA:**
+- Suggested schedule (weekly, biweekly, monthly)
+- Per-period amount or share count
+- How long to DCA (until position is full-sized)
+- Price level where you'd accelerate or pause
 
-### Path B: CC Recommendation
+**If LEAP Calls:**
+- Strike: ATM for balanced, deep ITM (delta 0.70-0.80) for stock replacement
+- Expiry: 9-12+ months out
+- Premium cost and max risk
+- Breakeven at expiry
+- Delta, theta decay rate
+- Exit plan: target profit %, stop-loss level
 
-- **Strike**: above cost basis (note: ask user for cost basis or assume current price), at resistance / take-profit level, delta 0.20-0.30
-- **Expiration**: specific date, DTE (30-45 sweetspot)
-- **Premium**: estimated credit per share and per contract
-- **Greeks**: delta, theta ($/day), vega, gamma
-- **Probability of profit** (that shares are NOT called away)
-- **Max profit**: premium + (strike - cost basis) × 100
-- **Downside protection**: cost basis minus premium collected
-- **Annualized return**: at full profit and at 50% early close
-
-Plus 1 alternative (different strike or expiry).
+**If Theta Gang:**
+- Refer user to `/theta-gang analyze $TICKER` for detailed options setup
+- Quick summary: suggested strategy (CSP/CC/PMCC/IC), approximate strike zone, target DTE
 
 ---
 
 ## Phase 5: Final Checklist
 
-**Common checks:**
 - [ ] Conviction in the company? (Phase 1)
-- [ ] IV rank justifies selling premium? (Phase 2)
-- [ ] No earnings/ex-div landmines in the window? (Phase 2)
-- [ ] DTE in 30-45 day sweetspot? (Phase 4)
-- [ ] Delta 0.20-0.30? (Phase 4)
-- [ ] Options are liquid (tight bid-ask)? (Phase 2)
-- [ ] Plan for management: close at 50% profit, roll rules clear? (Standing rule)
+- [ ] Entry timing makes sense given technicals? (Phase 2)
+- [ ] No earnings/ex-div landmines in the trade window? (Phase 2)
+- [ ] Strategy matches the stock's profile? (Phase 3)
+- [ ] Specific trade setup defined with entry, exit, and risk? (Phase 4)
+- [ ] Position sizing appropriate for portfolio?
 
-**Path A (CSP) checks:**
-- [ ] Strike is at a price you'd be happy to own at?
-- [ ] Enough buying power for assignment (~100 × strike)?
-
-**Path B (CC) checks:**
-- [ ] Strike is above your cost basis?
-- [ ] Strike is at a price you'd be happy to sell at?
-- [ ] Comfortable with capped upside if stock rallies past strike?
-
-**Final Verdict for each path:** Go / No-Go with a one-line summary.
-
-**Community check:**
-Before pulling the trigger, check what other traders are doing on this ticker at [thetagang.com/symbols/$TICKER](https://thetagang.com/symbols/$TICKER). Filter by strategy type and look at winners/losers to validate your setup.
+**Final Verdict:** Go / No-Go with a one-line summary and the recommended strategy.
 
 ---
 
@@ -158,8 +119,8 @@ status: watching
 added_date: YYYY-MM-DD
 sector: (infer from research)
 thesis: "(one-line summary of why this stock is interesting)"
-entry_target: (CSP strike recommendation from Phase 4)
-strategies: [CSP, CC]
+entry_target: (target entry price from Phase 4)
+strategies: [(recommended strategy from Phase 3)]
 ---
 ```
 

@@ -4,10 +4,9 @@
 
 **xiao-trading-agent** — A personal trading research and analysis workspace.
 
-## Use Cases
+## Stock Research
 
-### 1. Stock Research
-Act as an equity research analyst. For any company, focus on:
+Act as a top-tier equity research analyst. For any company, focus on:
 - **Business model** — how it makes money, what drives revenue and margins
 - **Competitive moat** — what makes it unique vs. competitors
 - Earnings calls analysis (key takeaways, guidance, surprises)
@@ -15,8 +14,36 @@ Act as an equity research analyst. For any company, focus on:
 
 Be brief and to the point. Lead with the business model and differentiation, then layer in sentiment and catalysts.
 
-### 2. Theta Gang Options Trading
-Expert analysis for selling options (theta decay strategies). Core principle: time is your friend — earn premium by selling extrinsic value (time + IV).
+Research establishes conviction first. At the end of every research output, include a **Strategy Fit** section recommending which trading strategy (Buy & Hold, DCA, LEAP Calls, Theta Gang) best suits the stock and why — based on the stock's volatility, IV environment, growth profile, and price action.
+
+## Trading Strategies
+
+After research establishes conviction, pick the right strategy for the situation. Each strategy has its own rules and will have dedicated skills.
+
+### 1. Buy & Hold
+Long-term conviction play. Buy shares and hold through volatility.
+- Best for: high-conviction, long-term compounders
+- Entry: buy on dips to support, or DCA in (see below)
+- Exit: thesis breaks, valuation gets extreme, or better opportunity elsewhere
+- Skills: *to be built*
+
+### 2. Dollar Cost Averaging (DCA)
+Systematic buying over time to reduce timing risk.
+- Best for: broad conviction but uncertain on timing or valuation
+- Rules: fixed amount on a regular schedule (weekly, biweekly, monthly), regardless of price
+- When to stop: thesis breaks or position reaches target size
+- Skills: *to be built*
+
+### 3. LEAP Calls
+Long-dated call options (6-12+ months out) for leveraged bullish exposure with defined risk.
+- Best for: high-conviction bullish plays where you want leverage without owning shares
+- Entry: buy deep ITM (delta 0.70-0.80) for stock replacement, or ATM/slightly OTM for more leverage
+- Expiry: minimum 6 months, prefer 9-12+ months to minimize time decay
+- Risk: can lose entire premium — size positions accordingly
+- Skills: *to be built*
+
+### 4. Theta Gang (Options Selling)
+Sell options to earn premium from time decay. Core principle: time is your friend — earn premium by selling extrinsic value (time + IV).
 
 **Trading Rules:**
 - Target 30-45 DTE (theta decay sweetspot)
@@ -30,7 +57,7 @@ Expert analysis for selling options (theta decay strategies). Core principle: ti
   - Puts: roll out & down
   - Calls: roll out & up
 
-**Strategies (in order of complexity):**
+**Sub-strategies (in order of complexity):**
 1. **Cash Secured Put (CSP)**: Bullish bias. Sell OTM put, delta 0.20-0.30
 2. **Covered Call (CC)**: Own 100 shares of a stable stock. Sell call above cost basis at your take-profit level
 3. **Poor Man's Covered Call (PMCC)**: Buy deep ITM long call (delta 0.80-0.90) + sell short OTM call (delta 0.20-0.30). For long-term bullish stocks with low IV rank / IV percentile <50%. Less capital than CC
@@ -42,11 +69,14 @@ Expert analysis for selling options (theta decay strategies). Core principle: ti
 - Theta = daily time decay earned — our edge
 - Vega = IV sensitivity — we want IV to drop after selling (negative vega position). IV crush after earnings benefits sellers
 
-**Performance Tracking:**
+**Skills:** `/strategy-theta-gang analyze`, `/strategy-theta-gang roll`, `/strategy-theta-gang leaders`, `/strike-picker`
+
+## Performance Tracking
+
+Applies across all strategies. Track per-stock and portfolio-wide over time.
 - **Sortino Ratio** (primary) — like Sharpe but only penalizes downside volatility, more honest for options selling where returns are negatively skewed
 - **Max Drawdown** — catches tail risk that Sharpe/Sortino miss
 - **Sharpe Ratio** — useful for comparison but can be artificially inflated by consistent small premiums hiding large tail risk
-- Track per-stock and portfolio-wide over time
 
 ## Research Taxonomy
 
@@ -68,12 +98,12 @@ Both sectors and themes are valid arguments for `/sector-scan`. Scan files go in
 
 ## Workflow
 
-The trading workflow is a lifecycle:
+The trading workflow is a lifecycle. Research comes first, then you pick a strategy:
 
 ```
-Sector Scan → Watchlist → Monitor → Entry → Active Management → Exit/Review
-     ↑                                                              |
-     └──────────────────── loop back ───────────────────────────────┘
+Sector Scan → Research → Pick Strategy → Entry → Active Management → Exit/Review
+     ↑                                                                    |
+     └──────────────────────── loop back ─────────────────────────────────┘
 ```
 
 **Skills mapped to workflow stages:**
@@ -81,17 +111,19 @@ Sector Scan → Watchlist → Monitor → Entry → Active Management → Exit/R
 | Stage | Skill | Purpose |
 |-------|-------|---------|
 | Scan | `/sector-scan` | Research a sector, rank candidates |
-| Screen | `/scanner` | Rank a list of tickers for theta gang |
-| Research | `/research`, `/earnings` | Deep-dive fundamentals |
+| Screen | `/scanner` | Rank a list of tickers across all strategies |
+| Research | `/research`, `/earnings` | Deep-dive fundamentals + strategy fit |
 | Watchlist | `/watch` | Add a ticker with entry criteria |
-| Pre-trade | `/plan`, `/theta-gang` | Full analysis before entering |
-| Compare | `/strike-picker` | Compare strike/expiry combos |
-| Validate | `/check-leaders` | Check what top traders are doing |
-| Visualize | `/chart` | Price chart with theta gang overlays |
+| Pre-trade | `/plan` | Full analysis: conviction → strategy fit → trade setup |
+| Theta gang | `/strategy-theta-gang` | Analyze options setup, roll positions, check leaders |
+| Compare strikes | `/strike-picker` | Compare strike/expiry combos (theta gang + LEAPs) |
+| Visualize | `/chart` | Price chart with overlays |
 | Entry | `/open` | Log a new position to portfolio |
-| Manage | `/review-position`, `/roll` | Review and manage active positions |
+| Manage | `/review-position` | Review active positions — hold, add, sell, or roll |
 | Dashboard | `/portfolio` | View all positions and stats |
 | Exit | `/close` | Close position, log P&L, run review |
+
+Strategy skills use the `strategy-` prefix. As new strategies are built out, they'll be added as `/strategy-dca`, `/strategy-leaps`, etc.
 
 ## Folder Structure
 
@@ -199,4 +231,4 @@ Returns JSON with: `price`, `technicals` (RSI, MACD, SMAs, BBands, ATR), `trend`
 
 ## Future Extensions
 
-This project may expand to additional trading strategies and tooling over time.
+Skills for Buy & Hold, DCA, and LEAP Calls strategies will be built out over time.
