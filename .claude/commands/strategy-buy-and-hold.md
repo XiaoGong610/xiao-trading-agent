@@ -1,0 +1,66 @@
+---
+description: Buy & Hold strategy — entry planning, position sizing, and thesis tracking
+---
+
+Buy & Hold strategy analysis for: $ARGUMENTS
+
+The argument is a ticker (e.g., "AAPL", "MSFT").
+
+Assume the user already has conviction from `/research-stock` or `/plan-stock`. This skill focuses on execution: when to buy, how much, and what would change the thesis.
+
+**Step 1:** Run the data script:
+```bash
+source .venv/bin/activate && python3 scripts/technicals.py $ARGUMENTS
+```
+
+Use the script's output for price, technicals, and support/resistance. Supplement with web search for recent news or valuation context.
+
+## Entry Analysis
+
+- Current price vs. 52-week range — where are we?
+- Key support levels — ideal buy zones
+- RSI, SMA alignment — is it oversold or extended?
+- Is now a good time to enter, or should you wait for a pullback?
+
+## Position Sizing
+
+- Suggest a position size as % of portfolio (consider conviction level and volatility)
+- Full position vs. starter position — recommend scaling in if price is extended
+- If starting small, suggest price levels to add more
+
+## Entry Plan
+
+- **Entry price / zone**: specific price range to buy
+- **Full position target**: how many shares for a full-sized position
+- **Scaling plan**: buy X shares now, add at $Y, add at $Z
+- **Timeline**: enter now vs. wait for a level
+
+## Thesis Tracker
+
+- **Bull case**: 1-2 sentences — what drives upside
+- **Bear case**: 1-2 sentences — what could go wrong
+- **Thesis-break triggers**: specific events or price levels that would make you sell (not just "if it drops")
+- **Review cadence**: how often to re-evaluate (quarterly earnings? monthly check?)
+
+## Exit Rules
+
+- **Take profit**: is there a target price or is this a hold-forever compounder?
+- **Stop loss**: hard stop or thesis-based exit?
+- **When to sell**: what would change your mind?
+
+Save the output to `watchlist/$TICKER.md` (use uppercase ticker as filename).
+Start the entry with: `---` followed by `# TICKER — Buy & Hold Plan | YYYY-MM-DD`.
+If the file already exists, prepend above previous entries (after YAML frontmatter). Never remove historical entries.
+
+If creating a new file, add YAML frontmatter:
+```yaml
+---
+ticker: TICKER
+status: watching
+added_date: YYYY-MM-DD
+sector: (infer from research)
+thesis: "(one-line summary)"
+entry_target: (target buy price)
+strategies: [buy-and-hold]
+---
+```

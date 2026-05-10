@@ -26,7 +26,12 @@ Combine both sources to cover the following sections:
 - Free cash flow
 
 ## Recent Earnings
-- Last earnings call highlights (beat/miss, guidance, key quotes from management)
+- Revenue: actual vs. estimate, YoY growth
+- EPS: actual vs. estimate, YoY growth
+- Management commentary: tone, strategic priorities, key quotes
+- Guidance: next quarter and full year vs. consensus (raised, maintained, lowered?)
+- Analyst Q&A highlights: toughest questions, any evasiveness or surprising candor
+- Market reaction: stock move after earnings, analyst rating/target changes
 - Next earnings date
 
 ## Market Sentiment

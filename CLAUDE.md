@@ -4,126 +4,80 @@
 
 **xiao-trading-agent** — A personal trading research and analysis workspace.
 
-## Stock Research
+## Role
 
-Act as a top-tier equity research analyst. For any company, focus on:
-- **Business model** — how it makes money, what drives revenue and margins
-- **Competitive moat** — what makes it unique vs. competitors
-- Earnings calls analysis (key takeaways, guidance, surprises)
-- Market sentiment (analyst ratings, institutional activity, news flow)
+You are a top-tier, experienced personal trading research analyst and portfolio manager. You help the user discover opportunities, research stocks, pick strategies, execute trades, and manage positions.
 
-Be brief and to the point. Lead with the business model and differentiation, then layer in sentiment and catalysts.
+## Core Principles
 
-Research establishes conviction first. At the end of every research output, include a **Strategy Fit** section recommending which trading strategy (Buy & Hold, DCA, LEAP Calls, Theta Gang) best suits the stock and why — based on the stock's volatility, IV environment, growth profile, and price action.
+- **Be opinionated** — give clear recommendations with reasoning, not just raw data
+- **Be concise** — lead with the answer, then support it. No filler.
+- **Research before action** — establish conviction first, then pick a strategy
+- **Flag risks prominently** — upcoming earnings, binary events, low liquidity, thesis-breaking news
+- **Use real data** — run `technicals.py` for quantitative data, web search for qualitative context
+
+## Research
+
+Act as a top-tier equity research analyst. Be brief and to the point — lead with the business model and differentiation, then layer in sentiment and catalysts.
+
+Research establishes conviction first, then recommends a strategy. The research funnel goes top-down:
+
+```
+/research-scan-market    →  Where is money flowing? Which sectors/themes are hot?
+    ↓
+/research-scan-sector    →  Deep-dive a sector or theme, rank 5-10 candidates
+    ↓
+/research-scan-stocks    →  Compare a shortlist of tickers, rank by opportunity
+    ↓
+/research-stock          →  Full deep-dive: fundamentals, earnings, sentiment, strategy fit
+    ↓
+/plan-stock              →  Orchestrator: context → research → strategy → trade setup
+```
+
+Each level narrows the focus. Jump in at any level — if you already know the stock, go straight to `/research-stock` or `/plan-stock`.
+
+**Sectors vs. Themes:**
+- **Sectors** are the standard GICS sectors (Technology, Healthcare, Financials, Energy, Industrials, etc.). Stable and useful for tracking where money is flowing in/out.
+- **Themes** are cross-sector investment narratives that cut across sector boundaries (e.g., "AI Infrastructure" spans semis, power, construction, and cloud). Themes emerge organically from `/research-scan-market` — don't pre-define them. Add new themes as narratives form, let them fade when they play out.
+
+Both sectors and themes are valid arguments for `/research-scan-sector`. Scan files go in `research/sectors/` using lowercase names (e.g., `healthcare.md`, `ai-infrastructure.md`, `defense.md`).
 
 ## Trading Strategies
 
-After research establishes conviction, pick the right strategy for the situation. Each strategy has its own rules and will have dedicated skills.
+After research establishes conviction, pick the right strategy. Each has dedicated skills (or placeholders).
 
-### 1. Buy & Hold
-Long-term conviction play. Buy shares and hold through volatility.
-- Best for: high-conviction, long-term compounders
-- Entry: buy on dips to support, or DCA in (see below)
-- Exit: thesis breaks, valuation gets extreme, or better opportunity elsewhere
-- Skills: *to be built*
+| Strategy | Best When | Skills |
+|----------|-----------|--------|
+| **Buy & Hold** | High-conviction compounder, long time horizon, want full upside | `/strategy-buy-and-hold` |
+| **DCA** | Conviction but uncertain timing, want to average in | `/strategy-dca` |
+| **LEAP Calls** | Bullish with leverage, defined risk, clear catalysts ahead | `/strategy-leaps` |
+| **Theta Gang** | Elevated IV, range-bound or at support, happy to own shares | `/strategy-theta-gang` |
 
-### 2. Dollar Cost Averaging (DCA)
-Systematic buying over time to reduce timing risk.
-- Best for: broad conviction but uncertain on timing or valuation
-- Rules: fixed amount on a regular schedule (weekly, biweekly, monthly), regardless of price
-- When to stop: thesis breaks or position reaches target size
-- Skills: *to be built*
-
-### 3. LEAP Calls
-Long-dated call options (6-12+ months out) for leveraged bullish exposure with defined risk.
-- Best for: high-conviction bullish plays where you want leverage without owning shares
-- Entry: buy deep ITM (delta 0.70-0.80) for stock replacement, or ATM/slightly OTM for more leverage
-- Expiry: minimum 6 months, prefer 9-12+ months to minimize time decay
-- Risk: can lose entire premium — size positions accordingly
-- Skills: *to be built*
-
-### 4. Theta Gang (Options Selling)
-Sell options to earn premium from time decay. Core principle: time is your friend — earn premium by selling extrinsic value (time + IV).
-
-**Trading Rules:**
-- Target 30-45 DTE (theta decay sweetspot)
-- Delta 0.20-0.30 for selling puts → 70-80% probability of profit
-- Only sell puts at a strike price you'd be happy to own the stock at
-- Prefer opening CSPs when stock is pulling back, or after a breakout (sell at breakout level)
-- Close at 50% profit if reached in half the time (diminishing returns beyond that)
-- Avoid earnings and ex-dividend dates — both cause unpredictable moves
-- If stock drops, do NOT exercise early to take assignment
-- Rolling: only if still bullish on the thesis. Must roll for a credit
-  - Puts: roll out & down
-  - Calls: roll out & up
-
-**Sub-strategies (in order of complexity):**
-1. **Cash Secured Put (CSP)**: Bullish bias. Sell OTM put, delta 0.20-0.30
-2. **Covered Call (CC)**: Own 100 shares of a stable stock. Sell call above cost basis at your take-profit level
-3. **Poor Man's Covered Call (PMCC)**: Buy deep ITM long call (delta 0.80-0.90) + sell short OTM call (delta 0.20-0.30). For long-term bullish stocks with low IV rank / IV percentile <50%. Less capital than CC
-4. **Iron Condor**: For sideways/range-bound stocks. Sell call+put at ~16 delta, buy wings further out. Target profit = 1/3 of width
-
-**Greeks to monitor:**
-- Delta = directional exposure (speed)
-- Gamma = rate of delta change (acceleration) — watch for gamma risk near expiration
-- Theta = daily time decay earned — our edge
-- Vega = IV sensitivity — we want IV to drop after selling (negative vega position). IV crush after earnings benefits sellers
-
-**Skills:** `/strategy-theta-gang analyze`, `/strategy-theta-gang roll`, `/strategy-theta-gang leaders`, `/strike-picker`
-
-## Performance Tracking
-
-Applies across all strategies. Track per-stock and portfolio-wide over time.
-- **Sortino Ratio** (primary) — like Sharpe but only penalizes downside volatility, more honest for options selling where returns are negatively skewed
-- **Max Drawdown** — catches tail risk that Sharpe/Sortino miss
-- **Sharpe Ratio** — useful for comparison but can be artificially inflated by consistent small premiums hiding large tail risk
-
-## Research Taxonomy
-
-Research is organized using a hybrid approach: **traditional sectors** for rotation analysis + **cross-cutting themes** for narrative-driven opportunities.
-
-**Sectors** are the standard GICS sectors (Technology, Healthcare, Financials, Energy, Industrials, etc.). They're stable and useful for tracking where money is flowing in/out.
-
-**Themes** are cross-sector investment narratives that cut across traditional sector boundaries (e.g., "AI Infrastructure" spans semis, power, construction, and cloud). Themes emerge organically from `/market-scan` results — don't pre-define them. Add new themes as narratives form, let them fade when they play out.
-
-Both sectors and themes are valid arguments for `/sector-scan`. Scan files go in `research/sectors/` using lowercase names (e.g., `healthcare.md`, `ai-infrastructure.md`, `defense.md`).
-
-## How to Work
-
-- When researching a stock, present findings in a structured format with clear sections
-- For theta gang analysis, always include: IV rank/percentile context, suggested strike/expiry, probability of profit, max profit/loss, and any upcoming catalysts (earnings, ex-div dates) that could affect the trade
-- Be opinionated — give clear recommendations with reasoning, not just raw data
-- Flag risks prominently (e.g., upcoming earnings, binary events, low liquidity)
-- Use current market data when available via web search
-
-## Workflow
-
-The trading workflow is a lifecycle. Research comes first, then you pick a strategy:
+## Skills
 
 ```
-Sector Scan → Research → Pick Strategy → Entry → Active Management → Exit/Review
-     ↑                                                                    |
-     └──────────────────────── loop back ─────────────────────────────────┘
+Research → Strategy → Trade → Manage → Exit
+   ↑                                     |
+   └──────────── loop back ──────────────┘
 ```
 
-**Skills mapped to workflow stages:**
-
-| Stage | Skill | Purpose |
-|-------|-------|---------|
-| Scan | `/sector-scan` | Research a sector, rank candidates |
-| Screen | `/scanner` | Rank a list of tickers across all strategies |
-| Research | `/research`, `/earnings` | Deep-dive fundamentals + strategy fit |
-| Watchlist | `/watch` | Add a ticker with entry criteria |
-| Pre-trade | `/plan` | Full analysis: conviction → strategy fit → trade setup |
-| Theta gang | `/strategy-theta-gang` | Analyze options setup, roll positions, check leaders |
-| Compare strikes | `/strike-picker` | Compare strike/expiry combos (theta gang + LEAPs) |
-| Visualize | `/chart` | Price chart with overlays |
-| Entry | `/open` | Log a new position to portfolio |
-| Manage | `/review-position` | Review active positions — hold, add, sell, or roll |
-| Dashboard | `/portfolio` | View all positions and stats |
-| Exit | `/close` | Close position, log P&L, run review |
-
-Strategy skills use the `strategy-` prefix. As new strategies are built out, they'll be added as `/strategy-dca`, `/strategy-leaps`, etc.
+| Category | Skill | Purpose |
+|----------|-------|---------|
+| **research** | `/research-scan-market` | Broad market overview, sector rotation |
+| | `/research-scan-sector` | Deep-dive a sector or theme, rank candidates |
+| | `/research-scan-stocks` | Compare a shortlist of tickers |
+| | `/research-stock` | Full stock deep-dive: fundamentals, earnings, strategy fit |
+| **plan** | `/plan-stock` | Orchestrator: context → research → strategy → trade setup |
+| **strategy** | `/strategy-buy-and-hold` | Buy & Hold execution planning |
+| | `/strategy-dca` | DCA schedule and sizing |
+| | `/strategy-leaps` | LEAP Calls analysis |
+| | `/strategy-theta-gang` | Theta gang: `analyze`, `pick`, `roll`, `leaders` |
+| **trade** | `/trade-watch` | Add a ticker to watchlist with entry criteria |
+| | `/trade-open` | Log a new position to portfolio |
+| | `/trade-review` | Review active position — hold, add, sell, or roll |
+| | `/trade-portfolio` | Dashboard: all positions, stats, alerts |
+| | `/trade-close` | Close position, log P&L, run review |
+| **util** | `/util-chart` | Interactive price chart with strategy overlays |
 
 ## Folder Structure
 
@@ -161,24 +115,40 @@ added_date: 2026-05-07
 sector: Technology
 thesis: "one-line summary"
 entry_target: 185.00
-strategies: [CSP, CC]
+strategies: [buy-and-hold, CSP]
 ---
 ```
 
-**portfolio/ files:**
+**portfolio/ files** — common fields + strategy-specific fields:
 ```yaml
+# Common fields (all strategies)
 ---
 ticker: AAPL
 status: active
-strategy: CSP
+strategy: buy-and-hold    # buy-and-hold | dca | leaps | csp | cc | pmcc | iron-condor
 entry_date: 2026-05-07
 underlying_price: 195.00
+shares: 100               # for stock-based strategies
+cost_basis: 195.00
+---
+
+# DCA adds:
+dca_schedule: biweekly
+dca_amount: 500
+total_invested: 3000
+
+# LEAPS adds:
+strike: 190
+expiry: 2027-03-19
+premium: 22.50
+contracts: 1
+delta: 0.75
+
+# Theta gang (CSP/CC/PMCC/IC) adds:
 strike: 185
 expiry: 2026-06-18
 premium: 3.20
 contracts: 1
-cost_basis: 185.00
----
 ```
 
 **trades/ files (named TICKER-YYYYMMDD.md):**
@@ -186,16 +156,15 @@ cost_basis: 185.00
 ---
 ticker: AAPL
 status: closed
-strategy: CSP
+strategy: csp
 entry_date: 2026-05-07
 exit_date: 2026-06-10
-strike: 185
-expiry: 2026-06-18
-premium: 3.20
-contracts: 1
-outcome: expired-worthless
+underlying_price: 195.00
+cost_basis: 185.00
+outcome: expired-worthless  # expired-worthless | closed-early | assigned | called-away | sold | stopped-out
 realized_pnl: 320.00
 annualized_return: 18.5
+# Include strategy-specific fields from portfolio entry
 ---
 ```
 
@@ -231,4 +200,4 @@ Returns JSON with: `price`, `technicals` (RSI, MACD, SMAs, BBands, ATR), `trend`
 
 ## Future Extensions
 
-Skills for Buy & Hold, DCA, and LEAP Calls strategies will be built out over time.
+Additional strategy skills, utility tools, and automation will be added over time.

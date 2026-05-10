@@ -7,6 +7,7 @@ Theta gang skill: $ARGUMENTS
 Parse the first word as the subcommand:
 
 - **`analyze TICKER`** — Analyze options setup for selling premium (e.g., "analyze AAPL")
+- **`pick TICKER STRATEGY`** — Compare strike/expiry combos (e.g., "pick AAPL CSP", "pick TSLA CC")
 - **`roll TICKER STRIKE EXPIRY STRATEGY`** — Analyze whether to roll a position (e.g., "roll AAPL 170P 2026-05-16 CSP")
 - **`leaders TICKER`** — Check what top thetagang.com traders are doing (e.g., "leaders AAPL")
 
@@ -77,6 +78,46 @@ strategies: [CSP, CC]
 ```
 
 If the file already exists and has frontmatter, do not modify the frontmatter — only prepend the new analysis entry below it.
+
+---
+
+# If subcommand is `pick`
+
+Compare strike and expiry options for the given ticker and strategy. Arguments after `pick`: TICKER STRATEGY (e.g., "pick AAPL CSP", "pick TSLA CC", "pick NVDA PMCC", "pick AMZN IC")
+
+**Step 1:** Run the data script:
+```bash
+source .venv/bin/activate && python3 scripts/technicals.py TICKER --options
+```
+
+Use the script's output for price, support/resistance, IV, and options chain data. Supplement with web search only if needed.
+
+## Current Setup
+- Stock price, 52-week range, recent trend
+- IV rank / IV percentile
+- Next earnings date and ex-dividend date (flag if within the trade window)
+
+## Strike/Expiry Comparison Table
+
+Build a comparison table with 3-5 candidates. Follow these rules:
+- **CSP**: delta 0.20-0.30, strike at support levels or a price you'd be happy owning
+- **CC**: strike above cost basis, at resistance / take-profit level
+- **PMCC**: long leg delta 0.80-0.90 (far out expiry), short leg delta 0.20-0.30 (30-45 DTE)
+- **Iron Condor**: sell both sides at ~16 delta, buy wings further out
+
+For each candidate, include:
+| Strike | Expiry (DTE) | Delta | Premium | PoP | Max Profit | Max Loss | Breakeven | Annualized Return |
+
+## Theta Decay Analysis
+- How much theta ($/day) does each candidate earn?
+- Is the DTE in the 30-45 day sweetspot?
+- Gamma risk assessment — any candidates too close to expiry?
+
+## Recommendation
+- Which specific strike/expiry combo offers the best risk/reward?
+- Why this one over the others?
+
+Do NOT save output to a file — this is a live analysis tool for decision-making.
 
 ---
 
