@@ -57,4 +57,17 @@ Pick one (or a combination) and explain why it suits this stock right now.
 
 Save the output to `research/stocks/$ARGUMENTS.md` (use uppercase ticker as filename).
 Start the entry with a date separator: `---` followed by `# TICKER — Research | YYYY-MM-DD`.
-If the file already exists, prepend the new analysis above all previous entries (after the file title). Never remove historical entries.
+If the file already exists, prepend the new analysis above all previous entries (after the YAML frontmatter block). Never remove historical entries.
+
+If creating a new file, add YAML frontmatter at the top:
+```yaml
+---
+ticker: TICKER
+status: researched
+added_date: YYYY-MM-DD
+sector: (infer from research)
+thesis: "(one-line summary)"
+---
+```
+
+**Update `research/stocks/0-INDEX.md`** — add the ticker under the appropriate status section if not already listed.

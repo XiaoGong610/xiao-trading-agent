@@ -6,7 +6,7 @@ Compare these stocks and rank them for the best trading opportunity: $ARGUMENTS
 
 The argument is a comma-separated list of tickers (e.g., "AAPL, TSLA, NVDA, AMZN, MSFT"). These should already be researched individually via `/research-stock` — this skill does the head-to-head comparison to decide which one to trade.
 
-**Step 1:** Read the existing research files for each ticker from `research/stocks/TICKER.md`. If a research file is missing for any ticker, flag it and suggest running `/research-stock TICKER` first.
+**Step 1:** Read the existing research files for each ticker from `research/stocks/TICKER.md`. If a candidate file is missing for any ticker, flag it and suggest running `/research-stock TICKER` first.
 
 **Step 2:** Synthesize the research into a comparative analysis. Focus on the differences that matter for deciding which stock to trade *now*.
 
@@ -40,5 +40,18 @@ For the top 2-3 candidates:
 
 ## Skip For Now
 - Which stocks to avoid right now and why (earnings too close, IV too low, overextended, thesis unclear, etc.)
+
+## ETF Alternative
+
+If the compared stocks share a common sector or theme, consider whether an ETF is a better option:
+
+- **When ETF wins:** Can't pick a clear winner among the candidates, want diversification, limited capital, or planning long-term DCA into a theme
+- **When individual stocks win:** High conviction in one name, want theta gang (ETFs usually have low IV), or the ETF dilutes the thesis with unrelated holdings
+
+For the stocks being compared, identify:
+- Any relevant ETFs that cover this group (e.g., SOXX/SMH for semis, IGV for software, XLE for energy)
+- What % of the ETF matches your thesis vs. dead weight
+- Whether the ETF has liquid options (for theta gang viability)
+- **Verdict:** ETF or individual stocks — and why
 
 Do NOT save output to a file — this is a live analysis tool for decision-making.

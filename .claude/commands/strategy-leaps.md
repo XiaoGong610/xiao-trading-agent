@@ -72,7 +72,7 @@ Recommend the best strike based on conviction level and risk tolerance.
 - **Roll if**: stock rallies and you want to stay in — roll up to a higher strike and/or further expiry
 - **Close if**: thesis breaks, LEAP loses 50%, or DTE < 90 days without rolling
 
-Save the output to `watchlist/$TICKER.md` (use uppercase ticker as filename).
+Save the output to `research/stocks/$TICKER.md` (use uppercase ticker as filename).
 Start the entry with: `---` followed by `# TICKER — LEAP Calls Plan | YYYY-MM-DD`.
 If the file already exists, prepend above previous entries (after YAML frontmatter). Never remove historical entries.
 
@@ -88,3 +88,5 @@ entry_target: (recommended strike)
 strategies: [leaps]
 ---
 ```
+
+**Update `research/stocks/0-INDEX.md`** — ensure the ticker is listed under `Watching`.

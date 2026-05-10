@@ -25,31 +25,48 @@ Use the script's output for price, volatility, and support/resistance. Supplemen
 - Upcoming events: earnings dates, ex-div dates in the DCA window
 - Is the stock in an uptrend, downtrend, or range? (DCA works in all, but sets expectations)
 
-## DCA Plan
+## DCA Approaches
 
-- **Schedule**: weekly, biweekly, or monthly — recommend based on stock volatility and budget
-  - Higher volatility → more frequent buys (capture more dips)
-  - Lower volatility → less frequent is fine
-- **Amount per period**: fixed dollar amount (e.g., $500/week)
-- **Total budget**: if provided, calculate how many periods to reach full position
-- **Number of shares per buy**: at current price, how many shares per period
-- **Duration**: how long to DCA (e.g., 3 months, 6 months)
-- **Target position size**: total shares/dollars when complete
+Present all three approaches and recommend the best fit (or a combination):
+
+### Approach A: Static Recurring (Pure DCA)
+Fixed dollar amount every day, regardless of price. Removes emotion and timing entirely.
+- **Schedule**: daily by default (user preference)
+- **Amount per day**: fixed (e.g., $100/day)
+- **Total budget**: if provided, calculate how many days to reach full position
+- **Duration**: how long to DCA (e.g., 1 month, 3 months, 6 months)
+- **Best when:** high conviction but uncertain timing, volatile stock, want hands-off
+
+### Approach B: Limit Buys at Target Prices
+Set buy orders at specific support levels. Only executes if price drops to target.
+- Use the script's support levels and volume profile HVN to set targets
+- Suggest 3-5 limit buy levels with amounts that increase at lower prices
+- **Best when:** stock is overextended, you want a better entry, you're patient
+
+| Level | Price | Amount | Rationale |
+|-------|-------|--------|-----------|
+
+### Approach C: Hybrid (DCA + Zone-Based Sizing)
+Daily recurring as the base, with zone-based adjustments — buy more at lower prices, less at highs.
+- **Base**: daily amount (e.g., $50/day)
+- **Zones**: define 3-4 price zones with multipliers
+
+| Zone | Price Range | Daily Amount | Rationale |
+|------|------------|-------------|-----------|
+| Extended | Above SMA 20 | 0.5x base | Reduce buying when overextended |
+| Fair | SMA 20 to SMA 50 | 1x base | Normal accumulation |
+| Attractive | SMA 50 to support | 2x base | Accelerate on pullback |
+| Deep value | Below support | 3x base | Heavy buying at key levels |
+
+- **Best when:** want steady accumulation but also want to capitalize on dips
+
+**Recommendation:** Pick the best approach (or combination) based on the stock's current price action, volatility, and how extended it is.
 
 ## Acceleration & Pause Rules
 
-- **Accelerate buys if**: stock drops X% below average cost (buy more on dips)
+- **Accelerate buys if**: stock drops >15% from average cost — increase daily amount or trigger limit buys
 - **Pause buys if**: thesis-breaking news, earnings miss, or stock drops below a key support level that changes the outlook
 - **Stop entirely if**: thesis breaks — specific triggers
-
-## Example Schedule
-
-Show a sample schedule with dates and expected buys:
-
-| Date | Amount | Est. Shares | Running Total | Running Cost Basis |
-|------|--------|-------------|---------------|-------------------|
-
-(Use the DCA schedule and current price to project the first 4-6 buys.)
 
 ## Tracking
 
@@ -57,7 +74,7 @@ Show a sample schedule with dates and expected buys:
 - Review thesis at each earnings report
 - Reassess DCA plan if stock moves ±20% from starting price
 
-Save the output to `watchlist/$TICKER.md` (use uppercase ticker as filename).
+Save the output to `research/stocks/$TICKER.md` (use uppercase ticker as filename).
 Start the entry with: `---` followed by `# TICKER — DCA Plan | YYYY-MM-DD`.
 If the file already exists, prepend above previous entries (after YAML frontmatter). Never remove historical entries.
 
@@ -73,3 +90,5 @@ entry_target: (current price — DCA starts at market)
 strategies: [dca]
 ---
 ```
+
+**Update `research/stocks/0-INDEX.md`** — ensure the ticker is listed under `Watching`.

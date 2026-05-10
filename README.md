@@ -51,8 +51,7 @@ A set of Claude Code custom skills for stock research and multi-strategy trading
 ```
 research/
   sectors/           # Sector-level scans (local only, gitignored)
-  stocks/            # Per-stock research (local only, gitignored)
-watchlist/           # Candidates being monitored (local only, gitignored)
+  stocks/            # Per-stock research & plans — one file per stock (local only, gitignored)
 portfolio/           # Active positions (local only, gitignored)
 trades/              # Closed trade log (local only, gitignored)
 charts/              # Generated HTML charts (local only, gitignored)

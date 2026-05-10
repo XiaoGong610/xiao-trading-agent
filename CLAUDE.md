@@ -20,21 +20,29 @@ You are a top-tier, experienced personal trading research analyst and portfolio 
 
 Act as a top-tier equity research analyst. Be brief and to the point — lead with the business model and differentiation, then layer in sentiment and catalysts.
 
-Research establishes conviction first, then recommends a strategy. The research funnel goes top-down:
+Research establishes conviction first, then recommends a strategy. The research funnel goes top-down, narrowing at each level:
 
 ```
 /research-scan-market       →  Where is money flowing? Which sectors/themes are hot?
-    ↓
+    ↓                            (broad, cheap — run freely)
 /research-scan-sector      →  Deep-dive a sector or theme, rank 5-10 candidates
-    ↓
+    ↓                            (moderate cost — run per sector of interest)
 /research-stock            →  Full deep-dive: fundamentals, earnings, sentiment, strategy fit
-    ↓
-/research-compare-stocks   →  Compare researched stocks head-to-head, pick the best
-    ↓
-/plan-stock                →  Orchestrator: context → research → strategy → trade setup
+    ↓                            (moderate cost — run on candidates worth investigating)
+/research-compare-stocks   →  Compare researched stocks head-to-head, pick the best + ETF alternative
+    ↓                            (cheap — reads existing research, no new data fetching)
+/plan-stock                →  Orchestrator: research → run all strategy skills → compare → recommend
+                                 (EXPENSIVE — runs multiple strategy skills. Only run on top picks)
 ```
 
-Each level narrows the focus. Jump in at any level — if you already know the stock, go straight to `/research-stock` or `/plan-stock`.
+**Cost discipline:** Each level should filter down. Don't run `/plan-stock` on every candidate — it runs all applicable strategy skills and is token-heavy. The recommended flow:
+
+1. **Scan broadly** — `/research-scan-market` + `/research-scan-sector` → many candidates (cheap)
+2. **Research selectively** — `/research-stock` on the top 5-10 candidates (moderate)
+3. **Compare & narrow** — `/research-compare-stocks` to pick the top 2-3 (cheap)
+4. **Plan only the best** — `/plan-stock` on the 2-3 you're seriously considering trading (expensive, but worth it)
+
+Jump in at any level — if you already know the stock, go straight to `/research-stock` or `/plan-stock`.
 
 **Sectors vs. Themes:**
 - **Sectors** are the standard GICS sectors (Technology, Healthcare, Financials, Energy, Industrials, etc.). Stable and useful for tracking where money is flowing in/out.
@@ -81,18 +89,34 @@ Research → Strategy → Trade → Manage → Exit
 
 ## Folder Structure
 
+Stock files live in `research/stocks/` and move to `portfolio/` when a trade is opened, then to `trades/` when closed:
+
+```
+research/stocks/ → portfolio/ → trades/
+```
+
 ```
 research/
-  sectors/         # Sector-level scans (e.g., software.md, semis.md)
-  stocks/          # Per-stock deep dives (e.g., AAPL.md)
-watchlist/         # Candidates being monitored with entry criteria
-portfolio/         # Active positions with YAML frontmatter metadata
+  sectors/         # Sector-level scans (e.g., software.md, semiconductors.md)
+  stocks/          # Per-stock files: research, plans, strategy analysis (one file per stock)
+portfolio/         # Active positions
 trades/            # Closed trade log (moved from portfolio on exit)
 charts/            # Generated interactive HTML charts
 leaders.md         # ThetaGang.com top traders reference
 ```
 
-- Each file accumulates historical analysis entries
+**Stock lifecycle status** — tracked via the `status` field in frontmatter and indexed in `research/stocks/0-INDEX.md`:
+
+| Status | Meaning | Location |
+|--------|---------|----------|
+| `researched` | Research done, no plan or watchlist entry yet | `research/stocks/` |
+| `watching` | Actively monitoring with entry criteria / plan | `research/stocks/` |
+| `in-portfolio` | Trade opened, position active | `research/stocks/` + `portfolio/` |
+| `removed` | No longer interested | `research/stocks/` (archived) |
+
+All skills that create or modify stock files must update both the file's frontmatter `status` and `research/stocks/0-INDEX.md`.
+
+- Each file accumulates historical analysis entries (research, plans, strategy analysis)
 - **Ordering rule:** newest analysis on top, oldest at bottom
 - **Section format:** every analysis entry must start with a clear date separator:
   ```
@@ -104,18 +128,18 @@ leaders.md         # ThetaGang.com top traders reference
 
 ## Frontmatter
 
-Files in `watchlist/`, `portfolio/`, and `trades/` use YAML frontmatter for structured metadata. This enables the `/portfolio` dashboard to parse and summarize positions.
+Files in `research/stocks/`, `portfolio/`, and `trades/` use YAML frontmatter for structured metadata.
 
-**watchlist/ files:**
+**research/stocks/ files:**
 ```yaml
 ---
 ticker: AAPL
-status: watching          # watching | in-portfolio | removed
+status: candidate         # candidate | in-portfolio | removed
 added_date: 2026-05-07
 sector: Technology
 thesis: "one-line summary"
 entry_target: 185.00
-strategies: [buy-and-hold, CSP]
+strategies: [buy-and-hold, csp]
 ---
 ```
 

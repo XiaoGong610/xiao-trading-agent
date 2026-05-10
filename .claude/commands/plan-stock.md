@@ -10,22 +10,21 @@ This is the **orchestrator** — it chains together the research funnel, strateg
 
 ---
 
-## Phase 1: Gather Context
+## Phase 1: Research
 
-**Check for existing research first:**
-- Read `research/stocks/$TICKER.md` — if a recent `/research-stock` entry exists, summarize key findings. Don't redo work.
+**Check for existing research:**
+- Read `research/stocks/$TICKER.md` — if a recent `/research-stock` entry exists (<7 days old), summarize key findings and move to Phase 2.
 - Read `research/sectors/` — check if the stock's sector has been scanned recently for broader context.
-- Read `research/sectors/market-overview.md` — pull current market pulse (sentiment, VIX, macro).
 
-**If no existing research:** Run the research inline:
-```bash
-.venv/bin/python3 scripts/technicals.py $ARGUMENTS --options
-```
-Then use web search for qualitative info. Cover: business model, growth, earnings, sentiment (same as `/research-stock`).
+**If no existing research, or research is stale (>7 days old):** Run `/research-stock $TICKER` first. This will:
+- Run `technicals.py` for quantitative data
+- Web search for qualitative info (business model, earnings, sentiment)
+- Save full output to `research/stocks/$TICKER.md`
+- Include a Strategy Fit recommendation
 
-**If existing research is stale (>7 days old):** Re-run the data script for fresh technicals, but reuse the qualitative research.
+Wait for the research to complete before proceeding.
 
-Summarize the conviction check:
+**Conviction check** — based on the research output:
 - **Verdict:** Pass / Fail — do you have conviction?
 - If Fail → stop here.
 
@@ -43,51 +42,36 @@ Use the script's `price`, `technicals`, `support`, `resistance`, and `options` d
 
 ---
 
-## Phase 3: Strategy Fit
+## Phase 3: Run Strategy Analysis
 
-Based on conviction, market context, and the stock's profile, recommend the best strategy:
+Run the applicable strategy skills to get concrete trade setups. Which skills to run depends on what's available:
 
-| Strategy | Best When | Skill |
-|----------|-----------|-------|
-| **Buy & Hold** | High-conviction compounder, long time horizon, want full upside | `/strategy-buy-and-hold` |
-| **DCA** | Conviction but timing uncertain, want to average in | `/strategy-dca` |
-| **LEAP Calls** | Bullish with leverage, defined risk, clear catalysts, IV is low | `/strategy-leaps` |
-| **Theta Gang** | Elevated IV, range-bound or at support, happy to own shares | `/strategy-theta-gang analyze` |
+**Always run:**
+- `/strategy-buy-and-hold $TICKER`
+- `/strategy-dca $TICKER`
 
-Consider:
-- Are US-listed options available? If not, only stock-based strategies apply (Buy & Hold, DCA).
-- Does the stock's volatility suit options selling or buying?
-- Is IV rich enough for theta gang, or too low (favoring LEAPs/buy & hold)?
-- Is the growth profile better suited for long-term holding or income extraction?
-- Does the user already own shares? (If unknown, analyze both paths)
+**Run if US-listed options are available:**
+- `/strategy-theta-gang analyze $TICKER`
+- `/strategy-leaps $TICKER`
 
-Pick the best fit (or a combination) and explain why.
+Each skill will produce its own detailed analysis (entry, sizing, exit rules, risk management). Collect all outputs before proceeding to Phase 4.
 
 ---
 
-## Phase 4: Trade Setup
+## Phase 4: Compare & Recommend
 
-Based on the chosen strategy, provide specific execution details by running the relevant strategy skill inline:
+With all strategy outputs in hand, compare them and pick the best fit:
 
-**If Buy & Hold:** Follow `/strategy-buy-and-hold` framework:
-- Entry price / target buy zone (support levels)
-- Position sizing (% of portfolio, scaling plan)
-- Thesis-break triggers and exit rules
+| Factor | Consider |
+|--------|----------|
+| Valuation | Stretched → favors DCA over lump sum. Fair/cheap → Buy & Hold viable |
+| IV environment | High IV → theta gang. Low IV → LEAPs or Buy & Hold |
+| Timing | At support → Buy & Hold. Uncertain → DCA. Pre-earnings → Wait |
+| Options liquidity | Illiquid or unavailable → stock-based strategies only |
+| Growth profile | Compounder → Buy & Hold/DCA. Range-bound → Theta Gang |
+| User's position | Already owns shares? → CC or add via DCA. No position → CSP or Buy & Hold |
 
-**If DCA:** Follow `/strategy-dca` framework:
-- Schedule (weekly, biweekly, monthly) and amount per period
-- Total budget and duration
-- Acceleration/pause rules
-
-**If LEAP Calls:** Follow `/strategy-leaps` framework:
-- Strike selection (deep ITM / ATM / OTM with rationale)
-- Expiry (9-12+ months), premium, breakeven, delta
-- Position sizing, stop loss, rolling plan
-
-**If Theta Gang:** Follow `/strategy-theta-gang analyze` framework:
-- Strategy (CSP/CC/PMCC/IC), strike, expiry, premium, Greeks
-- Probability of profit, max profit/loss, annualized return
-- Roll rules and management plan
+**Recommendation:** Pick the best strategy (or combination) with clear reasoning. Reference the specific trade setup from the winning strategy skill's output.
 
 ---
 
@@ -95,9 +79,10 @@ Based on the chosen strategy, provide specific execution details by running the 
 
 - [ ] Conviction in the company? (Phase 1)
 - [ ] Entry timing makes sense given technicals? (Phase 2)
+- [ ] Strategy skills have been run and outputs collected? (Phase 3)
+- [ ] Best strategy selected with clear reasoning? (Phase 4)
 - [ ] No earnings/ex-div landmines in the trade window? (Phase 2)
-- [ ] Strategy matches the stock's profile? (Phase 3)
-- [ ] Specific trade setup defined with entry, exit, and risk? (Phase 4)
+- [ ] Specific trade setup defined with entry, exit, and risk? (Phase 3-4)
 - [ ] Position sizing appropriate for portfolio?
 
 **Final Verdict:** Go / No-Go / Wait — with a one-line summary, recommended strategy, and next action.
@@ -106,7 +91,7 @@ If "Wait": specify what trigger or date to revisit (e.g., "Wait for post-earning
 
 ---
 
-Save the output to `watchlist/$TICKER.md` (use uppercase ticker as filename).
+Save the output to `research/stocks/$TICKER.md` (use uppercase ticker as filename).
 Start the entry with a date separator: `---` followed by `# TICKER — Pre-Trade Plan | YYYY-MM-DD`.
 If the file already exists, prepend the new analysis above all previous entries (after the YAML frontmatter block). Never remove historical entries.
 
@@ -123,4 +108,9 @@ strategies: [(recommended strategy from Phase 3)]
 ---
 ```
 
-If the file already exists and has frontmatter, do not modify the frontmatter — only prepend the new analysis entry below it.
+If the file already exists and has frontmatter:
+- If status is `researched`, update it to `watching` (plan promotes to watchlist)
+- Update `entry_target` and `strategies` based on Phase 4 results
+- Prepend the new analysis entry below the frontmatter
+
+**Update `research/stocks/0-INDEX.md`** — move the ticker to the `Watching` section if not already there.

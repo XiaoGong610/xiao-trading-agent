@@ -45,9 +45,9 @@ If `trades/` has files, parse frontmatter and show:
 
 If no trades yet, note this and skip the section.
 
-## Watchlist Summary
+## Candidates Summary
 
-If `watchlist/` has files, show a brief summary of stocks being monitored:
+If `research/stocks/` has files, show a brief summary of stocks being researched/monitored:
 
 | Ticker | Status | Thesis | Entry Target | Added |
 |--------|--------|--------|-------------|-------|

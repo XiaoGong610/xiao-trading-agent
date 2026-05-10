@@ -60,7 +60,7 @@ Suggest 1-2 setups. For each:
 - If go: best specific trade with reasoning
 - Check what other traders are doing on this ticker at [thetagang.com/symbols/TICKER](https://thetagang.com/symbols/TICKER) — filter by strategy type, look at winners/losers to validate your setup
 
-Save the output to `watchlist/TICKER.md` (use uppercase ticker as filename).
+Save the output to `research/stocks/TICKER.md` (use uppercase ticker as filename).
 Start the entry with a date separator: `---` followed by `# TICKER — Theta Gang Analysis | YYYY-MM-DD`.
 If the file already exists, prepend the new analysis above all previous entries (after the YAML frontmatter block). Never remove historical entries.
 
@@ -78,6 +78,8 @@ strategies: [CSP, CC]
 ```
 
 If the file already exists and has frontmatter, do not modify the frontmatter — only prepend the new analysis entry below it.
+
+**Update `research/stocks/0-INDEX.md`** — ensure the ticker is listed under `Watching`.
 
 ---
 

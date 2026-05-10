@@ -48,7 +48,7 @@ Use the script's output for price, technicals, and support/resistance. Supplemen
 - **Stop loss**: hard stop or thesis-based exit?
 - **When to sell**: what would change your mind?
 
-Save the output to `watchlist/$TICKER.md` (use uppercase ticker as filename).
+Save the output to `research/stocks/$TICKER.md` (use uppercase ticker as filename).
 Start the entry with: `---` followed by `# TICKER — Buy & Hold Plan | YYYY-MM-DD`.
 If the file already exists, prepend above previous entries (after YAML frontmatter). Never remove historical entries.
 
@@ -64,3 +64,5 @@ entry_target: (target buy price)
 strategies: [buy-and-hold]
 ---
 ```
+
+**Update `research/stocks/0-INDEX.md`** — ensure the ticker is listed under `Watching`.

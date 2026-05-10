@@ -38,11 +38,23 @@ For each candidate, briefly note:
 - Whether options are liquid enough for options strategies (if relevant)
 - Overall interest: Strong / Moderate / Watch Later
 
+## Relevant ETFs
+
+Identify ETFs that cover this sector or theme:
+
+| ETF | Name | Thesis Match | IV / Options | Verdict |
+|-----|------|-------------|-------------|---------|
+
+For each ETF, note:
+- How well it matches the sector thesis (what % is relevant vs. dead weight?)
+- Whether it has liquid options (for theta gang viability)
+- Whether DCA into the ETF makes more sense than picking individual stocks
+
 ## Top Picks
 Highlight the top 2-3 candidates and suggest next steps:
-- Run `/research TICKER` for a deep-dive on fundamentals
-- Run `/watch TICKER` to add to watchlist for monitoring
-- Run `/plan TICKER` if ready for a theta gang pre-trade analysis
+- Run `/research-stock TICKER` for a deep-dive on fundamentals
+- Run `/trade-watch TICKER` to add to watchlist for monitoring
+- Run `/plan-stock TICKER` for full pre-trade analysis
 
 Save the output to `research/sectors/$SECTOR.md` (use lowercase sector name as filename, e.g., `software.md`).
 Start the entry with a date separator: `---` followed by `# Sector — SECTOR | YYYY-MM-DD`.

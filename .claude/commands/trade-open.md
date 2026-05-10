@@ -51,11 +51,12 @@ cost_basis: (strike - premium for CSP, or underlying price for shares)
 **Management plan:** Close at 50% profit, roll if tested (per trading rules)
 ```
 
-3. **Update watchlist** (if `watchlist/TICKER.md` exists):
-   - Update the frontmatter `status` field from `watching` to `in-portfolio`
+3. **Update stock file** (if `research/stocks/TICKER.md` exists):
+   - Update the frontmatter `status` field to `in-portfolio`
+   - **Update `research/stocks/0-INDEX.md`** — move the ticker to `In Portfolio`
 
 4. If `portfolio/TICKER.md` already exists (second position on same ticker):
    - Create `portfolio/TICKER-2.md` instead (increment the suffix)
    - Keep the same frontmatter structure
 
-Do NOT run a full analysis — this is a logging action. The analysis should have been done via `/plan` before this point.
+Do NOT run a full analysis — this is a logging action. The analysis should have been done via `/plan-stock` before this point.

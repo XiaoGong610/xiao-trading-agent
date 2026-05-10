@@ -43,8 +43,9 @@ Outcomes: expired-worthless, closed-early, assigned, called-away, rolled-and-clo
    - Update frontmatter: set `status: closed`, add `exit_date`, `outcome`, `realized_pnl`, `annualized_return`
    - Append the trade review analysis
 
-6. **Update watchlist** (if `watchlist/TICKER.md` exists):
+6. **Update stock file** (if `research/stocks/TICKER.md` exists):
    - If outcome is assigned/called-away and user may want to re-enter, set status back to `watching`
    - If the user is done with this ticker, set status to `removed`
+   - **Update `research/stocks/0-INDEX.md`** — move the ticker to the appropriate section (`Watching` or `Removed`)
 
 Start the trade review entry with: `---` followed by `# TICKER — Trade Review | YYYY-MM-DD`.

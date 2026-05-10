@@ -31,7 +31,7 @@ Use the script's output for price, support levels, and technicals. Supplement wi
 - Suggest running `/plan TICKER` when entry conditions are approaching
 - Note any upcoming catalysts to watch
 
-Save the output to `watchlist/$TICKER.md` (use uppercase ticker as filename).
+Save the output to `research/stocks/$TICKER.md` (use uppercase ticker as filename).
 
 If creating a new file, add YAML frontmatter at the top:
 ```yaml
@@ -48,4 +48,8 @@ strategies: [CSP, CC]
 
 Start the analysis entry with: `---` followed by `# TICKER — Watchlist Entry | YYYY-MM-DD`.
 
-If the file already exists, prepend the new analysis above all previous entries (after the YAML frontmatter block). Do not modify existing frontmatter. Never remove historical entries.
+If the file already exists:
+- If status is `researched`, update it to `watching`
+- Prepend the new analysis above all previous entries (after the YAML frontmatter block). Never remove historical entries.
+
+**Update `research/stocks/0-INDEX.md`** — ensure the ticker is listed under `Watching`.
