@@ -80,32 +80,65 @@ def days_since(date_str: str) -> int:
         return 999
 
 
-def get_current_prices(tickers: list[str]) -> dict:
-    """Fetch current prices for a list of tickers."""
-    if not HAS_YFINANCE or not tickers:
-        return {}
+def compute_rsi(closes, period=14):
+    """Compute RSI from a series of closing prices."""
+    if len(closes) < period + 1:
+        return None
+    deltas = [closes[i] - closes[i-1] for i in range(1, len(closes))]
+    gains = [d if d > 0 else 0 for d in deltas]
+    losses = [-d if d < 0 else 0 for d in deltas]
 
+    avg_gain = sum(gains[:period]) / period
+    avg_loss = sum(losses[:period]) / period
+
+    for i in range(period, len(gains)):
+        avg_gain = (avg_gain * (period - 1) + gains[i]) / period
+        avg_loss = (avg_loss * (period - 1) + losses[i]) / period
+
+    if avg_loss == 0:
+        return 100.0
+    rs = avg_gain / avg_loss
+    return round(100 - (100 / (1 + rs)), 1)
+
+
+def get_market_data(tickers: list[str]) -> tuple[dict, dict]:
+    """Fetch current prices and RSI for a list of tickers."""
     prices = {}
+    rsi_values = {}
+
+    if not HAS_YFINANCE or not tickers:
+        return prices, rsi_values
+
     try:
         # Filter out non-US tickers
         us_tickers = [t for t in tickers if not any(c in t for c in ['.', '/', 'IBDNF'])]
         if us_tickers:
-            data = yf.download(us_tickers, period="1d", progress=False)
-            if 'Close' in data.columns or len(us_tickers) == 1:
+            data = yf.download(us_tickers, period="1mo", progress=False)
+            if len(us_tickers) == 1:
+                try:
+                    closes = data['Close'].dropna().tolist()
+                    if closes:
+                        prices[us_tickers[0]] = round(float(closes[-1]), 2)
+                        rsi = compute_rsi(closes)
+                        if rsi is not None:
+                            rsi_values[us_tickers[0]] = rsi
+                except (KeyError, IndexError):
+                    pass
+            else:
                 for ticker in us_tickers:
                     try:
-                        if len(us_tickers) == 1:
-                            price = data['Close'].iloc[-1]
-                        else:
-                            price = data['Close'][ticker].iloc[-1]
-                        if price and price > 0:
-                            prices[ticker] = round(float(price), 2)
+                        closes = data['Close'][ticker].dropna().tolist()
+                        if closes:
+                            prices[ticker] = round(float(closes[-1]), 2)
+                            rsi = compute_rsi(closes)
+                            if rsi is not None:
+                                rsi_values[ticker] = rsi
                     except (KeyError, IndexError):
                         pass
     except Exception:
         pass
 
-    return prices
+    return prices, rsi_values
 
 
 def load_stocks() -> list[dict]:
@@ -172,7 +205,18 @@ def load_trades() -> list[dict]:
     return trades
 
 
-def print_dashboard(stocks, portfolio, trades, prices):
+def rsi_label(rsi_val):
+    """Return a human-readable RSI label."""
+    if rsi_val is None:
+        return ""
+    if rsi_val < 30:
+        return f"{rsi_val} OVERSOLD"
+    elif rsi_val > 70:
+        return f"{rsi_val} OVERBOUGHT"
+    return f"{rsi_val}"
+
+
+def print_dashboard(stocks, portfolio, trades, prices, rsi_values=None):
     """Print the dashboard to stdout."""
     today = datetime.now().strftime("%Y-%m-%d")
 
@@ -204,6 +248,9 @@ def print_dashboard(stocks, portfolio, trades, prices):
             sectors[sector] = []
         sectors[sector].append(s)
 
+    if rsi_values is None:
+        rsi_values = {}
+
     for sector in sorted(sectors.keys()):
         print(f"\n  [{sector}]")
         for s in sectors[sector]:
@@ -212,8 +259,10 @@ def print_dashboard(stocks, portfolio, trades, prices):
             target = s["entry_target"]
             target_str = f"target ${target}" if target else ""
             strategies = ", ".join(s["strategies"]) if isinstance(s["strategies"], list) else s["strategies"]
+            rsi = rsi_values.get(ticker)
+            rsi_str = f"RSI {rsi_label(rsi)}" if rsi else ""
             stale_flag = " ⚠ STALE" if s["age_days"] > STALE_DAYS else ""
-            print(f"    {ticker:8s} {price_str:>10s} | {strategies:20s} | {target_str:15s} | updated {s['last_update']}{stale_flag}")
+            print(f"    {ticker:8s} {price_str:>10s} | {rsi_str:20s} | {strategies:20s} | {target_str:15s} | updated {s['last_update']}{stale_flag}")
 
     # Earnings calendar
     print(f"\n📅 UPCOMING EARNINGS")
@@ -259,7 +308,7 @@ def print_dashboard(stocks, portfolio, trades, prices):
 DASHBOARD_FILE = Path("research/stocks/1-DASHBOARD.md")
 
 
-def generate_markdown(stocks, portfolio, trades, prices) -> str:
+def generate_markdown(stocks, portfolio, trades, prices, rsi_values=None) -> str:
     """Generate a markdown version of the dashboard for file output."""
     today = datetime.now().strftime("%Y-%m-%d")
     lines = []
@@ -293,18 +342,22 @@ def generate_markdown(stocks, portfolio, trades, prices) -> str:
             sectors[sector] = []
         sectors[sector].append(s)
 
+    if rsi_values is None:
+        rsi_values = {}
+
     for sector in sorted(sectors.keys()):
         lines.append(f"### {sector}")
         lines.append(f"")
-        lines.append(f"| Ticker | Price | Target | Gap | Strategies | Last Updated |")
-        lines.append(f"|--------|-------|--------|-----|------------|-------------|")
+        lines.append(f"| Ticker | Price | RSI | Target | Gap | Strategies | Last Updated |")
+        lines.append(f"|--------|-------|-----|--------|-----|------------|-------------|")
         for s in sectors[sector]:
             ticker = s["ticker"]
             price = prices.get(ticker)
             price_str = f"${price:.2f}" if price else "—"
+            rsi = rsi_values.get(ticker)
+            rsi_str = f"**{rsi}** 🔻" if rsi and rsi < 30 else f"**{rsi}** 🔺" if rsi and rsi > 70 else f"{rsi}" if rsi else "—"
             target = s["entry_target"]
             target_str = f"${target}" if target else "—"
-            # Calculate gap between price and target
             if price and target:
                 try:
                     target_val = float(target)
@@ -316,7 +369,7 @@ def generate_markdown(stocks, portfolio, trades, prices) -> str:
                 gap_str = "—"
             strategies = ", ".join(s["strategies"]) if isinstance(s["strategies"], list) else s["strategies"]
             stale_flag = " ⚠" if s["age_days"] > STALE_DAYS else ""
-            lines.append(f"| [{ticker}](research/stocks/{s['ticker']}.md) | {price_str} | {target_str} | {gap_str} | {strategies} | {s['last_update']}{stale_flag} |")
+            lines.append(f"| [{ticker}]({s['ticker']}.md) | {price_str} | {rsi_str} | {target_str} | {gap_str} | {strategies} | {s['last_update']}{stale_flag} |")
         lines.append(f"")
 
     # Earnings calendar — sorted by date, future only
@@ -390,9 +443,12 @@ def main():
     portfolio = load_portfolio()
     trades = load_trades()
 
-    # Get current prices for watching stocks
+    # Get current prices and RSI for watching stocks
     watching_tickers = [s["ticker"] for s in stocks if s["status"] == "watching"]
-    prices = get_current_prices(watching_tickers) if not json_mode else {}
+    if json_mode:
+        prices, rsi_values = {}, {}
+    else:
+        prices, rsi_values = get_market_data(watching_tickers)
 
     if json_mode:
         output = {
@@ -404,10 +460,10 @@ def main():
         print(json.dumps(output, indent=2))
     else:
         # Print to terminal
-        print_dashboard(stocks, portfolio, trades, prices)
+        print_dashboard(stocks, portfolio, trades, prices, rsi_values)
 
         # Save to DASHBOARD.md
-        md = generate_markdown(stocks, portfolio, trades, prices)
+        md = generate_markdown(stocks, portfolio, trades, prices, rsi_values)
         DASHBOARD_FILE.write_text(md, encoding="utf-8")
         print(f"\nSaved to {DASHBOARD_FILE}")
 
