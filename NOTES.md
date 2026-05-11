@@ -92,3 +92,12 @@ Set up Claude Code cloud triggers to run jobs on a recurring schedule — so res
 - [ ] Weekly: re-run `/research-scan-market` for sector rotation updates
 - [ ] Pre-earnings: auto-flag stocks in watchlist with earnings approaching within 7 days
 - [ ] Explore Claude Code `/schedule` for cron-based remote agent triggers
+
+### 5. Leveraged ETF Strategy
+When considering strategies, also evaluate leveraged single-stock ETFs as an alternative to options for gaining leveraged exposure. Examples: TSLL (2x TSLA), CONL (2x COIN), NVDL (2x NVDA), etc.
+
+- [ ] Research available leveraged ETFs for stocks on our watchlist
+- [ ] Add leveraged ETF consideration to `/plan-stock` — when recommending LEAPs or Buy & Hold, compare with the leveraged ETF alternative
+- [ ] Document the tradeoffs: daily rebalancing decay, no options needed, simpler execution, but volatility drag on long holds
+- [ ] Add to `/strategy-buy-and-hold` and `/strategy-dca` — "would a leveraged ETF be more capital-efficient here?"
+- [ ] Consider as a strategy of its own (`/strategy-leveraged-etf`?) or fold into existing strategies
