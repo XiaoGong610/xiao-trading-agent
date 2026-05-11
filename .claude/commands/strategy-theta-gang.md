@@ -79,7 +79,7 @@ strategies: [CSP, CC]
 
 If the file already exists and has frontmatter, do not modify the frontmatter — only prepend the new analysis entry below it.
 
-**Update `research/stocks/0-INDEX.md`** — ensure the ticker is listed under `Watching`.
+**Update index:** Run `.venv/bin/python3 scripts/update-index.py` to regenerate `0-INDEX.md`.
 
 ---
 

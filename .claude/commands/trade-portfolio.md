@@ -4,52 +4,22 @@ description: Dashboard view of all active positions and trade history
 
 Show portfolio dashboard.
 
-This skill takes no arguments. It reads all files in `portfolio/` and `trades/` to produce a summary.
+**Step 1:** Run the dashboard script to generate the overview:
+```bash
+.venv/bin/python3 scripts/dashboard.py
+```
 
-## Active Positions
+This will:
+- Print a full dashboard to the terminal (portfolio, watchlist by sector with live prices, earnings calendar, stale alerts, trade history)
+- Save a markdown version to `DASHBOARD.md` in the project root (viewable in IDE)
 
-Read all `portfolio/*.md` files. Parse the YAML frontmatter from each file. Display a summary table:
+**Step 2:** After the script runs, review the output and highlight:
+- Any positions needing attention (DTE < 14, deep ITM, earnings approaching)
+- Stocks near their entry targets (current price close to target = action time)
+- Stale research that needs refreshing
+- Upcoming earnings in the next 7 days
 
-| Ticker | Strategy | Strike | Expiry | DTE | Premium | Contracts | Entry Date | Notes |
-|--------|----------|--------|--------|-----|---------|-----------|------------|-------|
-
-For each position, also check (using web search or yfinance):
-- Current stock price vs. strike (how far ITM/OTM)
-- Estimated current P&L (if possible to estimate)
-
-### Alerts
-Flag any positions that need attention:
-- **DTE < 14** — approaching expiration, consider closing or rolling
-- **Deep ITM** — assignment risk, consider rolling
-- **Earnings approaching** — check if earnings falls within remaining DTE
-- **At 50% profit** — consider closing early per trading rules
-
-## Capital Summary
-- Total buying power deployed (sum of strike × 100 × contracts for CSPs, or share value for CCs)
-- Number of active positions
-
-## Trade History (from trades/)
-
-If `trades/` has files, parse frontmatter and show:
-
-| Ticker | Strategy | Entry | Exit | Days | P&L | Return | Outcome |
-|--------|----------|-------|------|------|-----|--------|---------|
-
-### Cumulative Stats
-- Total realized P&L
-- Win rate
-- Average hold time
-- Average annualized return
-- Sortino Ratio (if enough trades)
-- Max Drawdown
-
-If no trades yet, note this and skip the section.
-
-## Candidates Summary
-
-If `research/stocks/` has files, show a brief summary of stocks being researched/monitored:
-
-| Ticker | Status | Thesis | Entry Target | Added |
-|--------|--------|--------|-------------|-------|
-
-Do NOT save output to a file — this is a live dashboard view.
+**Step 3:** Suggest next actions based on the dashboard:
+- Which stocks to enter (at or below target)
+- Which positions to review (`/trade-review TICKER`)
+- Which research to refresh (`/research-stock TICKER` or `/plan-stock TICKER`)

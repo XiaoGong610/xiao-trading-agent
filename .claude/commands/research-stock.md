@@ -70,4 +70,4 @@ thesis: "(one-line summary)"
 ---
 ```
 
-**Update `research/stocks/0-INDEX.md`** — add the ticker under the appropriate status section if not already listed.
+**Update index:** Run `.venv/bin/python3 scripts/update-index.py` to regenerate `0-INDEX.md`.

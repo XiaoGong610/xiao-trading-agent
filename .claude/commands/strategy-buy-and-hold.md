@@ -65,4 +65,4 @@ strategies: [buy-and-hold]
 ---
 ```
 
-**Update `research/stocks/0-INDEX.md`** — ensure the ticker is listed under `Watching`.
+**Update index:** Run `.venv/bin/python3 scripts/update-index.py` to regenerate `0-INDEX.md`.

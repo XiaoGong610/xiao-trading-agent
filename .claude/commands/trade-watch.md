@@ -52,4 +52,4 @@ If the file already exists:
 - If status is `researched`, update it to `watching`
 - Prepend the new analysis above all previous entries (after the YAML frontmatter block). Never remove historical entries.
 
-**Update `research/stocks/0-INDEX.md`** — ensure the ticker is listed under `Watching`.
+**Update index:** Run `.venv/bin/python3 scripts/update-index.py` to regenerate `0-INDEX.md`.

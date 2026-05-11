@@ -115,4 +115,4 @@ If the file already exists and has frontmatter:
 - Update `entry_target` and `strategies` based on Phase 4 results
 - Prepend the new analysis entry below the frontmatter
 
-**Update `research/stocks/0-INDEX.md`** — move the ticker to the `Watching` section if not already there.
+**Update index:** Run `.venv/bin/python3 scripts/update-index.py` to regenerate `0-INDEX.md`.

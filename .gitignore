@@ -6,5 +6,5 @@ trades/
 # Python virtual environment
 .venv/
 
-# Generated charts
+# Generated files
 charts/

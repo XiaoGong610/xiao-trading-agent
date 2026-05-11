@@ -46,6 +46,6 @@ Outcomes: expired-worthless, closed-early, assigned, called-away, rolled-and-clo
 6. **Update stock file** (if `research/stocks/TICKER.md` exists):
    - If outcome is assigned/called-away and user may want to re-enter, set status back to `watching`
    - If the user is done with this ticker, set status to `removed`
-   - **Update `research/stocks/0-INDEX.md`** — move the ticker to the appropriate section (`Watching` or `Removed`)
+   - **Update index:** Run `.venv/bin/python3 scripts/update-index.py` to regenerate `0-INDEX.md`
 
 Start the trade review entry with: `---` followed by `# TICKER — Trade Review | YYYY-MM-DD`.
