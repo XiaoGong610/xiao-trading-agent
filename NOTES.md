@@ -56,6 +56,25 @@ Key insight: "Don't chase hot spots — position ahead of the bottleneck shift."
 ### Comparison Grouping (2026-05-10)
 Comparisons can be within-sector or cross-sector. Saved to `research/comparisons/` with flexible naming.
 
+### Knowledge Base — Hybrid Approach (2026-05-12)
+Build a knowledge layer so the agent makes better decisions over time. Two components:
+
+**1. Knowledge files** (start here) — human-readable reference docs that skills can consult:
+```
+knowledge/
+  sectors/              — sector-specific logic (what metrics matter, cycle dynamics)
+  strategies/           — when to use each strategy, edge cases, rules of thumb
+  frameworks/           — reusable mental models (AI capital flow, valuation benchmarks)
+  signals/              — how to interpret RSI, IV rank, P/E in different contexts
+```
+
+**2. Scoring scripts** (build later) — systematic ranking of stocks by composite signals:
+- `scripts/screener.py` — input tickers, output ranked list by composite score
+- Rules codified in Python, not prompt-dependent
+- Consistent, fast, no token cost
+
+**Why hybrid:** Knowledge files handle nuance and context (when does low P/E NOT mean cheap?). Scripts handle systematic scoring (rank 42 stocks). Skills reference both.
+
 ---
 
 ## TODOs
@@ -101,3 +120,23 @@ When considering strategies, also evaluate leveraged single-stock ETFs as an alt
 - [ ] Document the tradeoffs: daily rebalancing decay, no options needed, simpler execution, but volatility drag on long holds
 - [ ] Add to `/strategy-buy-and-hold` and `/strategy-dca` — "would a leveraged ETF be more capital-efficient here?"
 - [ ] Consider as a strategy of its own (`/strategy-leveraged-etf`?) or fold into existing strategies
+
+### 6. Knowledge Base
+Build a knowledge layer for smarter decision-making. Start with knowledge files, add scoring scripts later.
+
+**Phase 1 — Knowledge files:**
+- [ ] `knowledge/sectors/semiconductors.md` — cycle dynamics, HBM/NAND drivers, key metrics, valuation benchmarks
+- [ ] `knowledge/sectors/energy.md` — oil price drivers, toll-model vs upstream, geopolitical risk framework
+- [ ] `knowledge/sectors/software.md` — SaaS metrics (NRR, ARR), AI disruption vs AI adoption framework
+- [ ] `knowledge/strategies/when-to-csp.md` — IV rank thresholds, delta/DTE rules, earnings avoidance, capital requirements
+- [ ] `knowledge/strategies/when-to-dca.md` — RSI zones, volatility-based sizing, daily vs window-based
+- [ ] `knowledge/strategies/when-to-leaps.md` — IV environment, delta selection, vega risk
+- [ ] `knowledge/frameworks/capital-flow.md` — AI bottleneck progression, 5 tracks, how to position ahead
+- [ ] `knowledge/frameworks/valuation.md` — P/E benchmarks by sector, what "cheap" means in context
+- [ ] `knowledge/signals/rsi-guide.md` — context-dependent interpretation, sector differences
+- [ ] `knowledge/signals/iv-rank-guide.md` — when to sell vs buy premium, thresholds
+
+**Phase 2 — Scoring scripts:**
+- [ ] `scripts/screener.py` — composite scoring (RSI + fwd P/E + gap-to-target + IV rank)
+- [ ] Wire into `/research-compare-stocks` for systematic ranking
+- [ ] Backtest scoring logic against past recommendations
