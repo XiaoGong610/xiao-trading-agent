@@ -140,3 +140,41 @@ Build a knowledge layer for smarter decision-making. Start with knowledge files,
 - [ ] `scripts/screener.py` — composite scoring (RSI + fwd P/E + gap-to-target + IV rank)
 - [ ] Wire into `/research-compare-stocks` for systematic ranking
 - [ ] Backtest scoring logic against past recommendations
+
+### 7. Risk & Portfolio Management
+Prevent overconcentration and size positions properly.
+
+- [ ] **Correlation analysis** — measure how correlated watching/portfolio stocks are. Flag if 80% of positions move together (e.g., all AI semis drop on one NVDA miss)
+- [ ] **Allocation framework** — define max % per stock, per sector, per theme. Enforce in `/plan-stock` recommendations
+- [ ] **Position sizing calculator** — Kelly criterion or fixed-risk model. Input: conviction level, volatility, portfolio size → output: how many shares/contracts
+- [ ] Add a portfolio risk section to `/trade-portfolio` dashboard showing sector concentration, correlation heatmap, and allocation vs. limits
+
+### 8. Macro Regime Detection
+Different market regimes favor different strategies. The agent should adapt.
+
+- [ ] **Regime classification** — bull / bear / sideways / high-vol / low-vol, based on S&P trend, VIX level, yield curve, breadth
+- [ ] **Strategy mapping by regime:**
+  - Bull + low vol → Buy & Hold, DCA, LEAPs
+  - Bull + high vol → DCA (not lump sum), CSPs at support
+  - Bear → CSPs get assigned more (danger), defensive stocks, cash-heavy
+  - Sideways → Theta gang shines (range-bound = premium selling paradise)
+- [ ] Integrate into `/research-scan-market` — report current regime and strategy implications
+- [ ] Add to knowledge base: `knowledge/frameworks/macro-regimes.md`
+
+### 9. Multi-Timeframe Analysis
+Daily RSI tells one story; weekly/monthly tell another. Combining timeframes gives higher conviction signals.
+
+- [ ] Add weekly and monthly RSI to dashboard alongside daily
+- [ ] **Confluence signals** — daily oversold + weekly at support + monthly uptrend = highest conviction entry
+- [ ] Update `scripts/dashboard.py` to fetch and display multi-timeframe RSI
+- [ ] Add to knowledge base: `knowledge/signals/multi-timeframe.md`
+- [ ] Consider adding weekly/monthly SMA alignment (e.g., price above monthly SMA 10 = long-term uptrend intact)
+
+### 10. Tax Optimization
+Maximize after-tax returns, especially with 40+ positions.
+
+- [ ] **Wash sale tracking** — flag if you sell a stock at a loss and rebuy within 30 days (or buy a "substantially identical" security like an ETF containing the stock)
+- [ ] **Tax-loss harvesting** — identify positions with unrealized losses that could offset gains. Suggest swaps (e.g., sell AMD at a loss, buy SMH temporarily)
+- [ ] **Short-term vs. long-term gains** — track holding periods. Positions held >1 year get favorable long-term capital gains rate
+- [ ] **End-of-year review** — annual skill to scan portfolio for tax optimization opportunities before Dec 31
+- [ ] Add to knowledge base: `knowledge/frameworks/tax-rules.md`
