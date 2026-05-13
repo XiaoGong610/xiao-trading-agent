@@ -152,7 +152,24 @@ Set up Claude Code cloud triggers to run jobs on a recurring schedule.
 - [ ] Pre-earnings: auto-flag stocks in watchlist with earnings approaching within 7 days
 - [ ] Explore Claude Code `/schedule` for cron-based remote agent triggers
 
-### 8. Multi-Timeframe Analysis ⬇️ LOW
+### 8. Visual Dashboard & Charts ➡️ MEDIUM
+Interactive visualizations to help interpret signals at a glance. Two phases:
+
+**Phase 1 — Plotly chart scripts (quick wins, extends `/util-chart`):**
+- [ ] `scripts/chart-watchlist.py` — RSI vs fwd P/E scatter plot for all watching stocks. X=RSI, Y=fwd P/E, size=gap-to-target. Oversold + cheap stocks stand out in bottom-left quadrant.
+- [ ] `scripts/chart-sectors.py` — sector allocation pie/treemap showing concentration risk
+- [ ] `scripts/chart-earnings.py` — earnings calendar timeline with countdown bars
+- [ ] `scripts/chart-performance.py` — portfolio P&L over time (once we have trade history)
+- [ ] All saved as interactive HTML to `charts/`, opened in browser
+
+**Phase 2 — Streamlit web app (full interactive dashboard):**
+- [ ] `scripts/app.py` — local web dashboard at `localhost:8501`
+- [ ] Combines: data tables + charts + filters (sector, strategy, RSI range) in one page
+- [ ] Built on top of existing `dashboard.py` logic
+- [ ] Live-updating with `streamlit run scripts/app.py`
+- [ ] Add `streamlit` to `.venv` dependencies
+
+### 9. Multi-Timeframe Analysis ⬇️ LOW
 Daily RSI tells one story; weekly/monthly tell another. Combining timeframes gives higher conviction signals.
 
 - [ ] Add weekly and monthly RSI to dashboard alongside daily
