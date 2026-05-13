@@ -115,4 +115,7 @@ If the file already exists and has frontmatter:
 - Update `entry_target` and `strategies` based on Phase 4 results
 - Prepend the new analysis entry below the frontmatter
 
-**Update index:** Run `.venv/bin/python3 scripts/update-index.py` to regenerate `0-INDEX.md`.
+**Update index & dashboard:**
+```bash
+.venv/bin/python3 scripts/update-index.py && .venv/bin/python3 scripts/dashboard.py
+```

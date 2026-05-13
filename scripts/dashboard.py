@@ -101,13 +101,14 @@ def compute_rsi(closes, period=14):
     return round(100 - (100 / (1 + rs)), 1)
 
 
-def get_market_data(tickers: list[str]) -> tuple[dict, dict]:
-    """Fetch current prices and RSI for a list of tickers."""
+def get_market_data(tickers: list[str]) -> tuple[dict, dict, dict]:
+    """Fetch current prices, RSI, and forward P/E for a list of tickers."""
     prices = {}
     rsi_values = {}
+    fwd_pe = {}
 
     if not HAS_YFINANCE or not tickers:
-        return prices, rsi_values
+        return prices, rsi_values, fwd_pe
 
     try:
         # Filter out non-US tickers
@@ -135,10 +136,20 @@ def get_market_data(tickers: list[str]) -> tuple[dict, dict]:
                                 rsi_values[ticker] = rsi
                     except (KeyError, IndexError):
                         pass
+
+            # Fetch forward P/E for each ticker
+            for ticker in us_tickers:
+                try:
+                    info = yf.Ticker(ticker).info
+                    pe = info.get('forwardPE')
+                    if pe and pe > 0:
+                        fwd_pe[ticker] = round(float(pe), 1)
+                except Exception:
+                    pass
     except Exception:
         pass
 
-    return prices, rsi_values
+    return prices, rsi_values, fwd_pe
 
 
 def load_stocks() -> list[dict]:
@@ -216,7 +227,7 @@ def rsi_label(rsi_val):
     return f"{rsi_val}"
 
 
-def print_dashboard(stocks, portfolio, trades, prices, rsi_values=None):
+def print_dashboard(stocks, portfolio, trades, prices, rsi_values=None, fwd_pe=None):
     """Print the dashboard to stdout."""
     today = datetime.now().strftime("%Y-%m-%d")
 
@@ -250,6 +261,8 @@ def print_dashboard(stocks, portfolio, trades, prices, rsi_values=None):
 
     if rsi_values is None:
         rsi_values = {}
+    if fwd_pe is None:
+        fwd_pe = {}
 
     for sector in sorted(sectors.keys()):
         print(f"\n  [{sector}]")
@@ -261,8 +274,10 @@ def print_dashboard(stocks, portfolio, trades, prices, rsi_values=None):
             strategies = ", ".join(s["strategies"]) if isinstance(s["strategies"], list) else s["strategies"]
             rsi = rsi_values.get(ticker)
             rsi_str = f"RSI {rsi_label(rsi)}" if rsi else ""
+            pe = fwd_pe.get(ticker)
+            pe_str = f"FwdPE {pe:.1f}x" if pe else ""
             stale_flag = " ⚠ STALE" if s["age_days"] > STALE_DAYS else ""
-            print(f"    {ticker:8s} {price_str:>10s} | {rsi_str:20s} | {strategies:20s} | {target_str:15s} | updated {s['last_update']}{stale_flag}")
+            print(f"    {ticker:8s} {price_str:>10s} | {rsi_str:20s} | {pe_str:14s} | {strategies:20s} | {target_str:15s} | updated {s['last_update']}{stale_flag}")
 
     # Earnings calendar
     print(f"\n📅 UPCOMING EARNINGS")
@@ -308,7 +323,7 @@ def print_dashboard(stocks, portfolio, trades, prices, rsi_values=None):
 DASHBOARD_FILE = Path("research/stocks/1-DASHBOARD.md")
 
 
-def generate_markdown(stocks, portfolio, trades, prices, rsi_values=None) -> str:
+def generate_markdown(stocks, portfolio, trades, prices, rsi_values=None, fwd_pe=None) -> str:
     """Generate a markdown version of the dashboard for file output."""
     today = datetime.now().strftime("%Y-%m-%d")
     lines = []
@@ -362,18 +377,22 @@ def generate_markdown(stocks, portfolio, trades, prices, rsi_values=None) -> str
 
     if rsi_values is None:
         rsi_values = {}
+    if fwd_pe is None:
+        fwd_pe = {}
 
     for sector in sorted(sectors.keys()):
         lines.append(f"### {sector}")
         lines.append(f"")
-        lines.append(f"| Ticker | Price | RSI | Target | Gap | Strategies | Last Updated |")
-        lines.append(f"|--------|-------|-----|--------|-----|------------|-------------|")
+        lines.append(f"| Ticker | Price | RSI | Fwd P/E | Target | Gap | Strategies | Last Updated |")
+        lines.append(f"|--------|-------|-----|---------|--------|-----|------------|-------------|")
         for s in sectors[sector]:
             ticker = s["ticker"]
             price = prices.get(ticker)
             price_str = f"${price:.2f}" if price else "—"
             rsi = rsi_values.get(ticker)
             rsi_str = f"**{rsi}** 🔻" if rsi and rsi < 30 else f"**{rsi}** 🔺" if rsi and rsi > 70 else f"{rsi}" if rsi else "—"
+            pe = fwd_pe.get(ticker)
+            pe_str = f"{pe:.1f}x" if pe else "—"
             target = s["entry_target"]
             target_str = f"${target}" if target else "—"
             if price and target:
@@ -387,7 +406,7 @@ def generate_markdown(stocks, portfolio, trades, prices, rsi_values=None) -> str
                 gap_str = "—"
             strategies = ", ".join(s["strategies"]) if isinstance(s["strategies"], list) else s["strategies"]
             stale_flag = " ⚠" if s["age_days"] > STALE_DAYS else ""
-            lines.append(f"| [{ticker}]({s['ticker']}.md) | {price_str} | {rsi_str} | {target_str} | {gap_str} | {strategies} | {s['last_update']}{stale_flag} |")
+            lines.append(f"| [{ticker}]({s['ticker']}.md) | {price_str} | {rsi_str} | {pe_str} | {target_str} | {gap_str} | {strategies} | {s['last_update']}{stale_flag} |")
         lines.append(f"")
 
     # Earnings calendar — sorted by date, future only
@@ -464,9 +483,9 @@ def main():
     # Get current prices and RSI for watching stocks
     watching_tickers = [s["ticker"] for s in stocks if s["status"] == "watching"]
     if json_mode:
-        prices, rsi_values = {}, {}
+        prices, rsi_values, fwd_pe = {}, {}, {}
     else:
-        prices, rsi_values = get_market_data(watching_tickers)
+        prices, rsi_values, fwd_pe = get_market_data(watching_tickers)
 
     if json_mode:
         output = {
@@ -478,10 +497,10 @@ def main():
         print(json.dumps(output, indent=2))
     else:
         # Print to terminal
-        print_dashboard(stocks, portfolio, trades, prices, rsi_values)
+        print_dashboard(stocks, portfolio, trades, prices, rsi_values, fwd_pe)
 
         # Save to DASHBOARD.md
-        md = generate_markdown(stocks, portfolio, trades, prices, rsi_values)
+        md = generate_markdown(stocks, portfolio, trades, prices, rsi_values, fwd_pe)
         DASHBOARD_FILE.write_text(md, encoding="utf-8")
         print(f"\nSaved to {DASHBOARD_FILE}")
 

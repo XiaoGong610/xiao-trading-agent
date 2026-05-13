@@ -70,4 +70,7 @@ thesis: "(one-line summary)"
 ---
 ```
 
-**Update index:** Run `.venv/bin/python3 scripts/update-index.py` to regenerate `0-INDEX.md`.
+**Update index & dashboard:**
+```bash
+.venv/bin/python3 scripts/update-index.py && .venv/bin/python3 scripts/dashboard.py
+```
