@@ -348,6 +348,15 @@ def generate_markdown(stocks, portfolio, trades, prices, rsi_values=None, fwd_pe
     lines.append(f"- CSP strike prices (the price you'd be happy owning at if assigned)")
     lines.append(f"- Pullback zones for overbought stocks")
     lines.append(f"")
+    lines.append(f"**Forward P/E** — price divided by next year's estimated earnings:")
+    lines.append(f"")
+    lines.append(f"| Fwd P/E | Signal | Meaning |")
+    lines.append(f"|---------|--------|---------|")
+    lines.append(f"| < 15 💰 | **Cheap** | Priced below market average — value opportunity |")
+    lines.append(f"| 15-30 | Fair | Reasonable for growth stocks |")
+    lines.append(f"| 30-60 | Expensive | Need strong growth to justify |")
+    lines.append(f"| > 100 ⚠️ | **Very Expensive** | Priced for perfection — any miss gets punished |")
+    lines.append(f"")
     lines.append(f"**Gap to Target** — how far current price is above your entry target. Lower = closer to actionable. Negative = below target (in the buy zone).")
     lines.append(f"")
 
@@ -392,7 +401,14 @@ def generate_markdown(stocks, portfolio, trades, prices, rsi_values=None, fwd_pe
             rsi = rsi_values.get(ticker)
             rsi_str = f"**{rsi}** 🔻" if rsi and rsi < 30 else f"**{rsi}** 🔺" if rsi and rsi > 70 else f"{rsi}" if rsi else "—"
             pe = fwd_pe.get(ticker)
-            pe_str = f"{pe:.1f}x" if pe else "—"
+            if pe and pe < 15:
+                pe_str = f"**{pe:.1f}x** 💰"  # cheap
+            elif pe and pe > 100:
+                pe_str = f"**{pe:.1f}x** ⚠️"  # very expensive
+            elif pe:
+                pe_str = f"{pe:.1f}x"
+            else:
+                pe_str = "—"
             target = s["entry_target"]
             target_str = f"${target}" if target else "—"
             if price and target:
