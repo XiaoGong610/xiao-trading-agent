@@ -99,11 +99,20 @@ research/stocks/ → portfolio/ → trades/
 research/
   sectors/         # Sector-level scans (e.g., software.md, semiconductors.md)
   stocks/          # Per-stock files: research, plans, strategy analysis (one file per stock)
+    0-INDEX.md     # Auto-generated stock index (by scripts/update-index.py)
+    1-DASHBOARD.md # Auto-generated trading dashboard (by scripts/dashboard.py)
   comparisons/     # Head-to-head stock comparisons (e.g., semiconductors-2026-05-10.md)
+knowledge/         # Decision-making reference docs (signals, frameworks, sector logic)
+  signals/         # RSI, IV rank interpretation guides
+  frameworks/      # Capital flow, valuation benchmarks
+  sectors/         # Sector-specific metrics and cycle dynamics
+  strategies/      # When to use each strategy, rules, edge cases
 portfolio/         # Active positions
 trades/            # Closed trade log (moved from portfolio on exit)
 charts/            # Generated interactive HTML charts
+scripts/           # Python scripts (technicals.py, update-index.py, dashboard.py)
 leaders.md         # ThetaGang.com top traders reference
+NOTES.md           # Project decisions, discussions, and TODOs
 ```
 
 **Stock lifecycle status** — tracked via the `status` field in frontmatter and indexed in `research/stocks/0-INDEX.md`:
@@ -135,7 +144,7 @@ Files in `research/stocks/`, `portfolio/`, and `trades/` use YAML frontmatter fo
 ```yaml
 ---
 ticker: AAPL
-status: candidate         # candidate | in-portfolio | removed
+status: watching          # researched | watching | in-portfolio | removed
 added_date: 2026-05-07
 sector: Technology
 thesis: "one-line summary"
@@ -208,21 +217,36 @@ Run scripts using `.venv/bin/python3` directly (do NOT use `source .venv/bin/act
 ## Scripts
 
 ### `scripts/technicals.py`
-Fetches structured market data for a ticker. Use this as the data backbone for skills that need current price, technicals, or options info.
+Fetches structured market data for a ticker. Data backbone for skills.
 
 ```bash
-# Basic: price + technicals + support/resistance + fundamentals
-python3 scripts/technicals.py AAPL
-
-# With options data (IV, put/call ratio, theta gang expiries)
-python3 scripts/technicals.py AAPL --options
-
-# Custom history period
-python3 scripts/technicals.py AAPL --period 1y
+.venv/bin/python3 scripts/technicals.py AAPL              # price + technicals + fundamentals
+.venv/bin/python3 scripts/technicals.py AAPL --options     # + IV, options chain
+.venv/bin/python3 scripts/technicals.py AAPL --period 1y   # custom history period
 ```
 
-Returns JSON with: `price`, `technicals` (RSI, MACD, SMAs, BBands, ATR), `trend`, `support`, `resistance`, `volume_profile_hvn`, `fundamentals`, and optionally `options`.
+Returns JSON: `price`, `technicals` (RSI, MACD, SMAs, BBands, ATR), `trend`, `support`, `resistance`, `volume_profile_hvn`, `fundamentals`, and optionally `options`.
 
-## Future Extensions
+### `scripts/update-index.py`
+Auto-generates `research/stocks/0-INDEX.md` from frontmatter in stock files. Groups by status, flags stale research (>7 days).
 
-Additional strategy skills, utility tools, and automation will be added over time.
+```bash
+.venv/bin/python3 scripts/update-index.py
+```
+
+### `scripts/dashboard.py`
+Generates trading dashboard with live prices, RSI, forward P/E, gap-to-target, earnings calendar. Outputs to terminal + saves to `research/stocks/1-DASHBOARD.md`.
+
+```bash
+.venv/bin/python3 scripts/dashboard.py          # terminal + file
+.venv/bin/python3 scripts/dashboard.py --json   # JSON output
+```
+
+## Knowledge Base
+
+Reference docs in `knowledge/` for trading decision-making. Skills consult these for context and nuance.
+
+- `signals/` — RSI interpretation, IV rank strategy selection matrix
+- `frameworks/` — AI capital flow model, valuation benchmarks by sector
+- `sectors/` — sector-specific metrics and cycle dynamics (to be built)
+- `strategies/` — when to use each strategy, rules, edge cases (to be built)
