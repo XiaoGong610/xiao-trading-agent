@@ -79,15 +79,15 @@ knowledge/
 
 ## TODOs
 
-### 1. Capture Current Holdings & Trades
+### 1. Capture Current Holdings & Trades ⬆️ HIGH
 Import existing portfolio positions and trade history so `/trade-portfolio` has real data. Without this, the agent can't factor in existing positions when recommending strategies.
 
 - [ ] Build `/trade-import` skill to bulk-load positions into `portfolio/` files
 - [ ] Support importing from brokerage exports (CSV) or manual entry
 - [ ] Populate frontmatter with strategy, entry date, cost basis, etc.
 
-### 2. Refine & Test Trade Skills
-The trade lifecycle skills (`trade-open`, `trade-close`, `trade-review`, `trade-portfolio`) have been built but never tested with real data. Depends on #1 — need real positions first, then run through the full lifecycle.
+### 2. Refine & Test Trade Skills ⬆️ HIGH (depends on #1)
+The trade lifecycle skills (`trade-open`, `trade-close`, `trade-review`, `trade-portfolio`) have been built but never tested with real data.
 
 - [ ] Test `/trade-open` — log a real position, verify frontmatter and portfolio file creation
 - [ ] Test `/trade-review` — review an active position, verify technicals integration
@@ -96,60 +96,35 @@ The trade lifecycle skills (`trade-open`, `trade-close`, `trade-review`, `trade-
 - [ ] Verify index (`0-INDEX.md`) status transitions work end-to-end
 - [ ] Refine skills based on real usage — same way we improved research and plan skills
 
-### 3. Market Intelligence Skills
-Add continuous monitoring capabilities beyond point-in-time research snapshots.
-
-- [ ] **Whale tracking** — institutional buys/sells, 13F filings, insider transactions, unusual options activity (dark pool, large blocks)
-- [ ] **Social sentiment** — monitor X (Twitter) for trending tickers and sentiment shifts, Reddit (r/wallstreetbets, r/options), StockTwits
-- [ ] **News alerts** — breaking news, FDA decisions, earnings surprises, analyst upgrades/downgrades
-- [ ] Consider using `/loop` for periodic monitoring
-
-### 4. Scheduled Cloud Agents
-Set up Claude Code cloud triggers to run jobs on a recurring schedule — so research and monitoring happen automatically without manual invocation.
-
-- [ ] Daily: refresh technicals for all watching stocks
-- [ ] Weekly: re-run `/research-scan-market` for sector rotation updates
-- [ ] Pre-earnings: auto-flag stocks in watchlist with earnings approaching within 7 days
-- [ ] Explore Claude Code `/schedule` for cron-based remote agent triggers
-
-### 5. Leveraged ETF Strategy
-When considering strategies, also evaluate leveraged single-stock ETFs as an alternative to options for gaining leveraged exposure. Examples: TSLL (2x TSLA), CONL (2x COIN), NVDL (2x NVDA), etc.
-
-- [ ] Research available leveraged ETFs for stocks on our watchlist
-- [ ] Add leveraged ETF consideration to `/plan-stock` — when recommending LEAPs or Buy & Hold, compare with the leveraged ETF alternative
-- [ ] Document the tradeoffs: daily rebalancing decay, no options needed, simpler execution, but volatility drag on long holds
-- [ ] Add to `/strategy-buy-and-hold` and `/strategy-dca` — "would a leveraged ETF be more capital-efficient here?"
-- [ ] Consider as a strategy of its own (`/strategy-leveraged-etf`?) or fold into existing strategies
-
-### 6. Knowledge Base
-Build a knowledge layer for smarter decision-making. Start with knowledge files, add scoring scripts later.
-
-**Phase 1 — Knowledge files:**
-- [ ] `knowledge/sectors/semiconductors.md` — cycle dynamics, HBM/NAND drivers, key metrics, valuation benchmarks
-- [ ] `knowledge/sectors/energy.md` — oil price drivers, toll-model vs upstream, geopolitical risk framework
-- [ ] `knowledge/sectors/software.md` — SaaS metrics (NRR, ARR), AI disruption vs AI adoption framework
-- [ ] `knowledge/strategies/when-to-csp.md` — IV rank thresholds, delta/DTE rules, earnings avoidance, capital requirements
-- [ ] `knowledge/strategies/when-to-dca.md` — RSI zones, volatility-based sizing, daily vs window-based
-- [ ] `knowledge/strategies/when-to-leaps.md` — IV environment, delta selection, vega risk
-- [ ] `knowledge/frameworks/capital-flow.md` — AI bottleneck progression, 5 tracks, how to position ahead
-- [ ] `knowledge/frameworks/valuation.md` — P/E benchmarks by sector, what "cheap" means in context
-- [ ] `knowledge/signals/rsi-guide.md` — context-dependent interpretation, sector differences
-- [ ] `knowledge/signals/iv-rank-guide.md` — when to sell vs buy premium, thresholds
-
-**Phase 2 — Scoring scripts:**
-- [ ] `scripts/screener.py` — composite scoring (RSI + fwd P/E + gap-to-target + IV rank)
-- [ ] Wire into `/research-compare-stocks` for systematic ranking
-- [ ] Backtest scoring logic against past recommendations
-
-### 7. Risk & Portfolio Management
-Prevent overconcentration and size positions properly.
+### 3. Risk & Portfolio Management ⬆️ HIGH
+Prevent overconcentration and size positions properly. Critical before scaling up positions.
 
 - [ ] **Correlation analysis** — measure how correlated watching/portfolio stocks are. Flag if 80% of positions move together (e.g., all AI semis drop on one NVDA miss)
 - [ ] **Allocation framework** — define max % per stock, per sector, per theme. Enforce in `/plan-stock` recommendations
 - [ ] **Position sizing calculator** — Kelly criterion or fixed-risk model. Input: conviction level, volatility, portfolio size → output: how many shares/contracts
 - [ ] Add a portfolio risk section to `/trade-portfolio` dashboard showing sector concentration, correlation heatmap, and allocation vs. limits
 
-### 8. Macro Regime Detection
+### 4. Knowledge Base 🔄 IN PROGRESS
+Build a knowledge layer for smarter decision-making. Start with knowledge files, add scoring scripts later.
+
+**Phase 1 — Knowledge files (4 done, 6 remaining):**
+- [x] `knowledge/signals/rsi-guide.md`
+- [x] `knowledge/signals/iv-rank-guide.md`
+- [x] `knowledge/frameworks/capital-flow.md`
+- [x] `knowledge/frameworks/valuation.md`
+- [ ] `knowledge/sectors/semiconductors.md` — cycle dynamics, HBM/NAND drivers, key metrics
+- [ ] `knowledge/sectors/energy.md` — oil price drivers, toll-model vs upstream, geopolitical risk
+- [ ] `knowledge/sectors/software.md` — SaaS metrics (NRR, ARR), AI disruption vs adoption
+- [ ] `knowledge/strategies/when-to-csp.md` — IV rank thresholds, delta/DTE rules, earnings avoidance
+- [ ] `knowledge/strategies/when-to-dca.md` — RSI zones, volatility-based sizing, daily vs window-based
+- [ ] `knowledge/strategies/when-to-leaps.md` — IV environment, delta selection, vega risk
+
+**Phase 2 — Scoring scripts:**
+- [ ] `scripts/screener.py` — composite scoring (RSI + fwd P/E + gap-to-target + IV rank)
+- [ ] Wire into `/research-compare-stocks` for systematic ranking
+- [ ] Backtest scoring logic against past recommendations
+
+### 5. Macro Regime Detection ➡️ MEDIUM
 Different market regimes favor different strategies. The agent should adapt.
 
 - [ ] **Regime classification** — bull / bear / sideways / high-vol / low-vol, based on S&P trend, VIX level, yield curve, breadth
@@ -161,7 +136,23 @@ Different market regimes favor different strategies. The agent should adapt.
 - [ ] Integrate into `/research-scan-market` — report current regime and strategy implications
 - [ ] Add to knowledge base: `knowledge/frameworks/macro-regimes.md`
 
-### 9. Multi-Timeframe Analysis
+### 6. Market Intelligence Skills ➡️ MEDIUM
+Add continuous monitoring capabilities beyond point-in-time research snapshots.
+
+- [ ] **Whale tracking** — institutional buys/sells, 13F filings, insider transactions, unusual options activity (dark pool, large blocks)
+- [ ] **Social sentiment** — monitor X (Twitter) for trending tickers and sentiment shifts, Reddit (r/wallstreetbets, r/options), StockTwits
+- [ ] **News alerts** — breaking news, FDA decisions, earnings surprises, analyst upgrades/downgrades
+- [ ] Consider using `/loop` for periodic monitoring
+
+### 7. Scheduled Cloud Agents ➡️ MEDIUM
+Set up Claude Code cloud triggers to run jobs on a recurring schedule.
+
+- [ ] Daily: refresh technicals for all watching stocks
+- [ ] Weekly: re-run `/research-scan-market` for sector rotation updates
+- [ ] Pre-earnings: auto-flag stocks in watchlist with earnings approaching within 7 days
+- [ ] Explore Claude Code `/schedule` for cron-based remote agent triggers
+
+### 8. Multi-Timeframe Analysis ⬇️ LOW
 Daily RSI tells one story; weekly/monthly tell another. Combining timeframes gives higher conviction signals.
 
 - [ ] Add weekly and monthly RSI to dashboard alongside daily
@@ -170,11 +161,19 @@ Daily RSI tells one story; weekly/monthly tell another. Combining timeframes giv
 - [ ] Add to knowledge base: `knowledge/signals/multi-timeframe.md`
 - [ ] Consider adding weekly/monthly SMA alignment (e.g., price above monthly SMA 10 = long-term uptrend intact)
 
-### 10. Tax Optimization
-Maximize after-tax returns, especially with 40+ positions.
+### 9. Leveraged ETF Strategy ⬇️ LOW
+Evaluate leveraged single-stock ETFs as alternative to options. Examples: TSLL (2x TSLA), CONL (2x COIN), NVDL (2x NVDA).
 
-- [ ] **Wash sale tracking** — flag if you sell a stock at a loss and rebuy within 30 days (or buy a "substantially identical" security like an ETF containing the stock)
-- [ ] **Tax-loss harvesting** — identify positions with unrealized losses that could offset gains. Suggest swaps (e.g., sell AMD at a loss, buy SMH temporarily)
-- [ ] **Short-term vs. long-term gains** — track holding periods. Positions held >1 year get favorable long-term capital gains rate
-- [ ] **End-of-year review** — annual skill to scan portfolio for tax optimization opportunities before Dec 31
+- [ ] Research available leveraged ETFs for stocks on our watchlist
+- [ ] Add leveraged ETF consideration to `/plan-stock`
+- [ ] Document the tradeoffs: daily rebalancing decay, no options needed, volatility drag on long holds
+- [ ] Consider as a strategy of its own (`/strategy-leveraged-etf`?) or fold into existing strategies
+
+### 10. Tax Optimization 📅 SEASONAL
+Maximize after-tax returns. Critical before year-end.
+
+- [ ] **Wash sale tracking** — flag if you sell a stock at a loss and rebuy within 30 days
+- [ ] **Tax-loss harvesting** — identify positions with unrealized losses that could offset gains
+- [ ] **Short-term vs. long-term gains** — track holding periods (>1 year = favorable rate)
+- [ ] **End-of-year review** — annual skill to scan portfolio for tax optimization before Dec 31
 - [ ] Add to knowledge base: `knowledge/frameworks/tax-rules.md`
